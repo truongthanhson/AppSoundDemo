@@ -6,32 +6,17 @@
               android:layout_height="fill_parent"
               android:orientation="vertical">
 
-    <AbsoluteLayout
-            android:layout_width="wrap_content"
-            android:layout_height="0px"
-            android:layout_weight="1"
+    <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
             android:paddingTop="40dip">
 
-        <com.sontruong.appsound.view.WaveformView android:id="@+id/waveform"
-                                             android:layout_width="fill_parent"
-                                             android:layout_height="fill_parent" />
-
-        <com.sontruong.appsound.view.MarkerView android:id="@+id/startmarker"
-                                             android:nextFocusDown="@+id/endmarker"
-                                             android:layout_width="wrap_content"
-                                             android:layout_height="wrap_content"
-                                             android:src="@drawable/marker_left"
-                                             android:contentDescription="@string/start_marker" />
-
-        <com.sontruong.appsound.view.MarkerView android:id="@+id/endmarker"
-                                             android:nextFocusUp="@+id/startmarker"
-                                             android:nextFocusDown="@+id/info"
-                                             android:layout_width="wrap_content"
-                                             android:layout_height="wrap_content"
-                                             android:src="@drawable/marker_right"
-                                             android:contentDescription="@string/end_marker" />
-
-    </AbsoluteLayout>
+        <ImageView
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:scaleType="fitXY"
+            android:id="@+id/bitmap"/>
+    </FrameLayout>
 
     <TextView android:id="@+id/info"
               android:nextFocusUp="@+id/endmarker"
