@@ -18,4 +18,16 @@ public class AndroidUtilities {
         }
         return (int) Math.ceil(density * value);
     }
+
+    public static void runOnUIThread(Runnable runnable) {
+        runOnUIThread(runnable, 0);
+    }
+
+    public static void runOnUIThread(Runnable runnable, long delay) {
+        if (delay == 0) {
+            DemoApplication.applicationHandler.post(runnable);
+        } else {
+            DemoApplication.applicationHandler.postDelayed(runnable, delay);
+        }
+    }
 }

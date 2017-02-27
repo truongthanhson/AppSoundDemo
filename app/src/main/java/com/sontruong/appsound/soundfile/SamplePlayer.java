@@ -34,6 +34,7 @@ public class SamplePlayer {
     private AudioTrack mAudioTrack;
     private short[] mBuffer;
     private int mPlaybackStart;  // Start offset, in samples.
+    private int mPlaybackEnd;  // Start offset, in samples.
     private Thread mPlayThread;
     private boolean mKeepPlaying;
     private OnCompletionListener mListener;
@@ -44,6 +45,7 @@ public class SamplePlayer {
         mChannels = channels;
         mNumSamples = numSamples;
         mPlaybackStart = 0;
+        mPlaybackEnd = numSamples;
 
         int bufferSize = AudioTrack.getMinBufferSize(
                 mSampleRate,
@@ -110,7 +112,7 @@ public class SamplePlayer {
             public void run() {
                 int position = mPlaybackStart * mChannels;
                 mSamples.position(position);
-                int limit = mNumSamples * mChannels;
+                int limit = mPlaybackEnd * mChannels;
                 while (mSamples.position() < limit && mKeepPlaying) {
                     int numSamplesLeft = limit - mSamples.position();
                     if(numSamplesLeft >= mBuffer.length) {
@@ -167,6 +169,13 @@ public class SamplePlayer {
         mAudioTrack.setNotificationMarkerPosition(mNumSamples - 1 - mPlaybackStart);
         if (wasPlaying) {
             start();
+        }
+    }
+
+    public void setPlaybackEnd(int endMilis){
+        mPlaybackEnd = (int)(endMilis * (mSampleRate / 1000.0));
+        if(mPlaybackEnd <= mPlaybackStart){
+            mPlaybackEnd = mNumSamples;
         }
     }
 

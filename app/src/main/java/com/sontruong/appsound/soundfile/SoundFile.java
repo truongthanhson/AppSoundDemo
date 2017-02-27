@@ -35,6 +35,7 @@ public class SoundFile {
     // Member variables representing frame data
     private String mFileType;
     private int mFileSize;
+    private long mFileDuration;
     private int mAvgBitRate;  // Average bit rate in kbps.
     private int mSampleRate;
     private int mChannels;
@@ -112,6 +113,10 @@ public class SoundFile {
         return mAvgBitRate;
     }
 
+    public long getFileDuration(){
+        return mFileDuration;
+    }
+
     public int getSampleRate() {
         return mSampleRate;
     }
@@ -181,9 +186,10 @@ public class SoundFile {
         }
         mChannels = format.getInteger(MediaFormat.KEY_CHANNEL_COUNT);
         mSampleRate = format.getInteger(MediaFormat.KEY_SAMPLE_RATE);
+        mFileDuration = format.getLong(MediaFormat.KEY_DURATION);
         // Expected total number of samples per channel.
         int expectedNumSamples =
-            (int)((format.getLong(MediaFormat.KEY_DURATION) / 1000000.f) * mSampleRate + 0.5f);
+            (int)((mFileDuration/ 1000000.f) * mSampleRate + 0.5f);
 
         MediaCodec codec = MediaCodec.createDecoderByType(format.getString(MediaFormat.KEY_MIME));
         codec.configure(format, null, null, 0);
