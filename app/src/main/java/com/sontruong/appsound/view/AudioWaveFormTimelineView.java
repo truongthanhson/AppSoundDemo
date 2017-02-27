@@ -19,9 +19,17 @@ public class AudioWaveFormTimelineView extends View {
     private Paint paint;
     private Paint paint2;
     private float progressLeft = 0;
+    private float progressMidle = 0.5f;
     private float progressRight = 1;
     private boolean pressedLeft = false;
     private boolean pressedRight = false;
+    private boolean pressedMiddle = false;
+
+    private boolean chooseLeft = false;
+    private boolean chooseRight = false;
+    private boolean chooseMiddle = false;
+    private float chooseDx = 0;
+
     private float pressDx = 0;
     private AudioWaveFormTimelineViewDelegate delegate = null;
     private Bitmap mBitmap;
@@ -29,6 +37,7 @@ public class AudioWaveFormTimelineView extends View {
 
     public interface AudioWaveFormTimelineViewDelegate {
         void onLeftProgressChanged(float progress);
+        void onMidleProgressChanged(float progress);
         void onRightProgressChanged(float progress);
     }
 
@@ -66,6 +75,7 @@ public class AudioWaveFormTimelineView extends View {
 
         int width = getMeasuredWidth();
         int startX = (int)(width * progressLeft);
+        int midX = (int)(width * progressMidle);
         int endX = (int)(width * progressRight);
 
         if (event.getAction() == MotionEvent.ACTION_DOWN) {
@@ -82,6 +92,26 @@ public class AudioWaveFormTimelineView extends View {
                 getParent().requestDisallowInterceptTouchEvent(true);
                 invalidate();
                 return true;
+            }else if (midX - additionWidth <= x && x <= midX + additionWidth && y >= 0 && y <= getMeasuredHeight()) {
+                pressedMiddle = true;
+                pressDx = (int)(x - midX);
+                getParent().requestDisallowInterceptTouchEvent(true);
+                invalidate();
+                return true;
+            }else{
+                if(x <= startX - additionWidth){
+                    chooseDx = x;
+                    chooseLeft = true;
+                    return true;
+                }else if(x >= startX + additionWidth && x <= endX - additionWidth){
+                    chooseDx = x;
+                    chooseMiddle = true;
+                    return true;
+                }else if(x >= endX + additionWidth){
+                    chooseDx = x;
+                    chooseRight = true;
+                    return true;
+                }
             }
         } else if (event.getAction() == MotionEvent.ACTION_UP || event.getAction() == MotionEvent.ACTION_CANCEL) {
             if (pressedLeft) {
@@ -90,14 +120,46 @@ public class AudioWaveFormTimelineView extends View {
             } else if (pressedRight) {
                 pressedRight = false;
                 return true;
+            }else if (pressedMiddle) {
+                pressedMiddle = false;
+                return true;
+            }else{
+                if (chooseLeft) {
+                    chooseLeft = false;
+                    startX = (int) x;
+                    progressLeft = (float)(startX) / (float)width;
+                    if (delegate != null) {
+                        delegate.onLeftProgressChanged(progressLeft);
+                    }
+                    invalidate();
+                    return true;
+                } else if (chooseRight) {
+                    chooseRight = false;
+                    endX = (int) x;
+                    progressRight = (float)(endX) / (float)width;
+                    if (delegate != null) {
+                        delegate.onRightProgressChanged(progressRight);
+                    }
+                    invalidate();
+                    return true;
+                }else if (chooseMiddle) {
+                    chooseMiddle = false;
+                    midX = (int) x;
+                    progressMidle = (float)(midX) / (float)width;
+                    if (delegate != null) {
+                        delegate.onMidleProgressChanged(progressMidle);
+                    }
+                    invalidate();
+                    return true;
+                }
             }
         } else if (event.getAction() == MotionEvent.ACTION_MOVE) {
             if (pressedLeft) {
                 startX = (int)(x - pressDx);
                 if (startX < 0) {
                     startX = 0;
-                } else if (startX > endX) {
-                    startX = endX;
+                } else if (startX > midX) {
+                    startX = midX;
                 }
                 progressLeft = (float)(startX) / (float)width;
                 if (delegate != null) {
@@ -107,14 +169,27 @@ public class AudioWaveFormTimelineView extends View {
                 return true;
             } else if (pressedRight) {
                 endX = (int)(x - pressDx);
-                if (endX < startX) {
-                    endX = startX;
+                if (endX < midX) {
+                    endX = midX;
                 } else if (endX > width) {
                     endX = width;
                 }
                 progressRight = (float)(endX) / (float)width;
                 if (delegate != null) {
                     delegate.onRightProgressChanged(progressRight);
+                }
+                invalidate();
+                return true;
+            }else if (pressedMiddle) {
+                midX = (int)(x - pressDx);
+                if (midX < startX) {
+                    midX = startX;
+                } else if ( midX> endX) {
+                    midX = endX;
+                }
+                progressMidle = (float)(midX) / (float)width;
+                if (delegate != null) {
+                    delegate.onMidleProgressChanged(progressMidle);
                 }
                 invalidate();
                 return true;
@@ -132,6 +207,7 @@ public class AudioWaveFormTimelineView extends View {
         int width = getMeasuredWidth();
         int height = getMeasuredHeight();
         int startX = (int)(width * progressLeft);
+        int midX = (int)(width * progressMidle);
         int endX = (int)(width * progressRight);
 
         canvas.save();
@@ -141,12 +217,14 @@ public class AudioWaveFormTimelineView extends View {
         canvas.drawRect(endX + AndroidUtilities.dp(4), 0, + width + AndroidUtilities.dp(4), height, paint2);
 
         canvas.drawRect(startX, 0, startX + AndroidUtilities.dp(2), height, paint);
-        canvas.drawRect(endX + AndroidUtilities.dp(2), 0, endX + AndroidUtilities.dp(4), height, paint);
+        canvas.drawRect(midX, 0, midX + AndroidUtilities.dp(2), height, paint);
+        canvas.drawRect(endX, 0, endX + AndroidUtilities.dp(4), height, paint);
         canvas.drawRect(startX + AndroidUtilities.dp(2), 0, endX + AndroidUtilities.dp(4), AndroidUtilities.dp(2), paint);
         canvas.drawRect(startX + AndroidUtilities.dp(2), height - AndroidUtilities.dp(2), endX + AndroidUtilities.dp(4), height, paint);
         canvas.restore();
 
         canvas.drawCircle(startX, getMeasuredHeight() / 2, AndroidUtilities.dp(7), paint);
-        canvas.drawCircle(endX + AndroidUtilities.dp(4), getMeasuredHeight() / 2, AndroidUtilities.dp(7), paint);
+        canvas.drawCircle(midX, getMeasuredHeight() / 2, AndroidUtilities.dp(7), paint);
+        canvas.drawCircle(endX, getMeasuredHeight() / 2, AndroidUtilities.dp(7), paint);
     }
 }

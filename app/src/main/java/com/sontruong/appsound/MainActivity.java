@@ -90,6 +90,11 @@ public class MainActivity extends AppCompatActivity {
             }
 
             @Override
+            public void onMidleProgressChanged(float progress) {
+                Log.e("sontt","middle -- >" + progress);
+            }
+
+            @Override
             public void onRightProgressChanged(float progress) {
                 Log.e("sontt","right -- >" + progress);
             }
