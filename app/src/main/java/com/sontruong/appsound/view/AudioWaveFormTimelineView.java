@@ -211,20 +211,20 @@ public class AudioWaveFormTimelineView extends View {
         int endX = (int)(width * progressRight);
 
         canvas.save();
-        canvas.clipRect(0, 0, width + AndroidUtilities.dp(4), height);
+        canvas.clipRect(0, 0, width + AndroidUtilities.dp(2), height);
 
         canvas.drawRect(0, 0, startX, height, paint2);
-        canvas.drawRect(endX + AndroidUtilities.dp(4), 0, + width + AndroidUtilities.dp(4), height, paint2);
+        canvas.drawRect(endX + AndroidUtilities.dp(2), 0, + width + AndroidUtilities.dp(2), height, paint2);
 
         canvas.drawRect(startX, 0, startX + AndroidUtilities.dp(2), height, paint);
         canvas.drawRect(midX, 0, midX + AndroidUtilities.dp(2), height, paint);
-        canvas.drawRect(endX, 0, endX + AndroidUtilities.dp(4), height, paint);
-        canvas.drawRect(startX + AndroidUtilities.dp(2), 0, endX + AndroidUtilities.dp(4), AndroidUtilities.dp(2), paint);
-        canvas.drawRect(startX + AndroidUtilities.dp(2), height - AndroidUtilities.dp(2), endX + AndroidUtilities.dp(4), height, paint);
+        canvas.drawRect(endX, 0, endX + AndroidUtilities.dp(2), height, paint);
+        canvas.drawRect(startX + AndroidUtilities.dp(2), 0, endX + AndroidUtilities.dp(2), AndroidUtilities.dp(2), paint);
+        canvas.drawRect(startX + AndroidUtilities.dp(2), height - AndroidUtilities.dp(2), endX + AndroidUtilities.dp(2), height, paint);
         canvas.restore();
 
-        canvas.drawCircle(startX, getMeasuredHeight() / 2, AndroidUtilities.dp(7), paint);
-        canvas.drawCircle(midX, getMeasuredHeight() / 2, AndroidUtilities.dp(7), paint);
-        canvas.drawCircle(endX, getMeasuredHeight() / 2, AndroidUtilities.dp(7), paint);
+        canvas.drawCircle(startX, getMeasuredHeight() / 2, AndroidUtilities.dp(8), paint);
+        canvas.drawCircle(midX, getMeasuredHeight() / 2, AndroidUtilities.dp(8), paint);
+        canvas.drawCircle(endX, getMeasuredHeight() / 2, AndroidUtilities.dp(8), paint);
     }
 }

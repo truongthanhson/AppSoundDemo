@@ -31,27 +31,88 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
 
-                <ImageView
-                    android:id="@+id/photo_detail_img_id"
+                <FrameLayout
+                    android:id="@+id/photo_container"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent" />
+                    android:layout_height="match_parent">
 
-                <com.andexert.library.RippleView
-                    rv_centered="true"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="top|right"
-                    android:layout_margin="5dp"
-                    app:rv_alpha="150"
-                    app:rv_rippleDuration="100">
+                    <ImageView
+                        android:id="@+id/photo_detail_img_id"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent" />
 
-                    <ImageButton
-                        android:id="@+id/photo_edit_btn_id"
+                    <com.andexert.library.RippleView
+                        rv_centered="true"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:background="@color/transparent"
-                        android:src="@drawable/ic_edit" />
-                </com.andexert.library.RippleView>
+                        android:layout_gravity="top|right"
+                        android:layout_margin="5dp"
+                        app:rv_alpha="150"
+                        app:rv_rippleDuration="100">
+
+                        <ImageButton
+                            android:id="@+id/photo_edit_btn_id"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:background="@color/transparent"
+                            android:src="@drawable/ic_edit" />
+                    </com.andexert.library.RippleView>
+                </FrameLayout>
+
+                <RelativeLayout
+                    android:id="@+id/waveform_container"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical"
+                    android:visibility="gone">
+
+                    <FrameLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="200dp"
+                        android:layout_alignParentTop="true">
+
+                        <ImageView
+                            android:id="@+id/waveform"
+                            android:layout_width="fill_parent"
+                            android:layout_height="fill_parent"
+                            android:scaleType="fitXY" />
+
+                        <com.sontruong.appsound.view.AudioWaveFormTimelineView
+                            android:id="@+id/timeline"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent" />
+
+                    </FrameLayout>
+
+                    <LinearLayout
+                        style="@style/ToolbarBackground"
+                        android:layout_width="fill_parent"
+                        android:layout_height="62dip"
+                        android:layout_alignParentBottom="true"
+                        android:gravity="center" >
+
+                        <ImageButton android:id="@+id/play"
+                            android:layout_width="71dip"
+                            android:layout_height="52dip"
+                            android:layout_marginTop="6dip"
+                            android:layout_marginBottom="6dip"
+                            style="@android:style/MediaButton"
+                            android:contentDescription="@string/play"
+                            android:src="@android:drawable/ic_media_play" />
+
+                        <ImageButton android:id="@+id/ffwd"
+                            android:layout_width="64dip"
+                            android:layout_height="52dip"
+                            android:layout_marginRight="5dip"
+                            android:layout_marginTop="6dip"
+                            android:layout_marginBottom="6dip"
+                            style="@android:style/MediaButton"
+                            android:contentDescription="@string/ffwd"
+                            android:src="@android:drawable/ic_media_next" />
+
+                    </LinearLayout>
+
+                </RelativeLayout>
             </FrameLayout>
         </android.support.v7.widget.CardView>
 
