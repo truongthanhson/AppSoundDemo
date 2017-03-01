@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/photo_ll_id"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="#f1f5f7"
+    android:orientation="vertical"
+    android:padding="2dp">
+
+    <com.andexert.library.RippleView
+        android:id="@+id/photo_ripple_id"
+        rv_centered="true"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:rv_alpha="150"
+        app:rv_rippleDuration="150">
+
+        <ImageView
+            android:id="@+id/photo_img_id"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:adjustViewBounds="true"
+            android:clickable="true" />
+    </com.andexert.library.RippleView>
+
+</LinearLayout>
