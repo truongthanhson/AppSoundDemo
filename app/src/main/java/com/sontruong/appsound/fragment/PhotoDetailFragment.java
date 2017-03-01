@@ -14,13 +14,16 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.ScaleAnimation;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.PopupMenu;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
@@ -32,6 +35,7 @@ import com.sontruong.appsound.soundfile.SamplePlayer;
 import com.sontruong.appsound.soundfile.SoundFile;
 import com.sontruong.appsound.soundfile.WaveformManager;
 import com.sontruong.appsound.utils.AndroidUtilities;
+import com.sontruong.appsound.soundfile.VoiceRecorder;
 import com.sontruong.appsound.utils.Constants;
 import com.sontruong.appsound.utils.Database;
 import com.sontruong.appsound.utils.StringUtils;
@@ -39,12 +43,14 @@ import com.sontruong.appsound.view.AudioWaveFormTimelineView;
 
 import java.io.File;
 
-public class PhotoDetailFragment extends Fragment implements OnClickListener {
+public class PhotoDetailFragment extends Fragment implements OnClickListener, View.OnTouchListener {
     private View mView;
     private ImageView mImageView;
     private ImageButton mEditButton;
     private EditText mEditText;
     private TextView mLangText;
+    private TextView mTimerText;
+    private FrameLayout mRecordButton;
     private HomeActivityDelegate delegate;
     private int mPhotoId;
     private ImageView mWaveformImg;
@@ -63,7 +69,7 @@ public class PhotoDetailFragment extends Fragment implements OnClickListener {
     private long mLoadingLastUpdateTime;
     private Thread mLoadSoundFileThread;
     private float[] mSegmentPos = new float[]{0.0f, 0.5f, 1.0f};
-
+    private String mRecordPath;
     private static final String TAG = "PhotoDetailFragment";
 
     @Override
@@ -96,12 +102,12 @@ public class PhotoDetailFragment extends Fragment implements OnClickListener {
 
     private void initView() {
         mEditText = (EditText) mView.findViewById(R.id.description_et_id);
-        if(Database.getInstance().checkDescriptionLanguage(mPhotoId)) {
+        if (Database.getInstance().checkDescriptionLanguage(mPhotoId)) {
             mEditText.setText(Database.getInstance().getDescriptionLanguage(mPhotoId));
         }
 
         mLangText = (TextView) mView.findViewById(R.id.language_tv_id);
-        if(Database.getInstance().checkActiveLanguage(mPhotoId)) {
+        if (Database.getInstance().checkActiveLanguage(mPhotoId)) {
             mLangText.setText(Database.getInstance().getActiveLanguage(mPhotoId));
         }
 
@@ -154,6 +160,9 @@ public class PhotoDetailFragment extends Fragment implements OnClickListener {
 
         mHandler = new Handler();
         waveformManager = new WaveformManager(getActivity());
+        mRecordButton = (FrameLayout) mView.findViewById(R.id.record_fl_id);
+        mRecordButton.setOnTouchListener(this);
+        mRecordPath = Database.getInstance().getPhotoRecord(mPhotoId);
     }
 
 
@@ -202,9 +211,7 @@ public class PhotoDetailFragment extends Fragment implements OnClickListener {
 
     private void onWaveformShow() {
         if(waveformAvailable()){
-//            String audioFilePath = Database.getInstance().getPhotoRecord(mPhotoId);
-            String audioFilePath = Environment.getExternalStorageDirectory() + "/son.mp3";
-            loadFromFile(audioFilePath);
+            loadFromFile(mRecordPath);
         }else{
             mView.findViewById(R.id.waveform_container).setVisibility(View.GONE);
             mImageView.setVisibility(View.VISIBLE);
@@ -217,8 +224,7 @@ public class PhotoDetailFragment extends Fragment implements OnClickListener {
     }
 
     private boolean waveformAvailable() {
-//        return !StringUtils.isNullOrEmpty(Database.getInstance().getPhotoRecord(mPhotoId));
-        return true;
+        return !StringUtils.isNullOrEmpty(mRecordPath);
     }
 
     private void loadFromFile(String audioPath) {
@@ -326,4 +332,38 @@ public class PhotoDetailFragment extends Fragment implements OnClickListener {
         }
     }
 
+    @Override
+    public boolean onTouch(View view, MotionEvent event) {
+        switch (event.getAction()) {
+            case MotionEvent.ACTION_DOWN:
+                mView.findViewById(R.id.record_normal_fl_id).setVisibility(View.GONE);
+                mView.findViewById(R.id.record_press_fl_id).setVisibility(View.VISIBLE);
+                mRecordPath = Environment.getExternalStorageDirectory() + Constants.PATH_APP + "/" + Constants.PATH_SOUND + "/" + mPhotoId + "_record.3gpp";
+                VoiceRecorder.getInstance().startRecord(mRecordPath);
+                scaleView(view, 1.5f, 1f);
+                break;
+            case MotionEvent.ACTION_UP:
+                mView.findViewById(R.id.record_normal_fl_id).setVisibility(View.VISIBLE);
+                mView.findViewById(R.id.record_press_fl_id).setVisibility(View.GONE);
+                VoiceRecorder.getInstance().endRecord();
+                Database.getInstance().updatePhotoRecord(mPhotoId, mRecordPath);
+                break;
+            case MotionEvent.ACTION_MOVE:
+                break;
+            default:
+                return false;
+        }
+        return true;
+    }
+
+    public void scaleView(View v, float startScale, float endScale) {
+        Animation anim = new ScaleAnimation(
+                startScale, endScale, // Start and end values for the X axis scaling
+                startScale, endScale, // Start and end values for the Y axis scaling
+                Animation.RELATIVE_TO_SELF, 0.5f, // Pivot point of X scaling
+                Animation.RELATIVE_TO_SELF, 0.5f); // Pivot point of Y scaling
+        anim.setFillAfter(true); // Needed to keep the result of the animation
+        anim.setDuration(1000);
+        v.startAnimation(anim);
+    }
 }
