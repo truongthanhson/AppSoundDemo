@@ -94,40 +94,28 @@
                         android:textSize="16sp" />
                 </LinearLayout>
 
-                <android.support.v7.widget.CardView
+                <com.andexert.library.RippleView
+                    rv_centered="true"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentBottom="true"
                     android:layout_centerHorizontal="true"
                     android:layout_marginBottom="5dp"
-                    android:duplicateParentState="true"
-                    card_view:cardBackgroundColor="@android:color/transparent"
-                    card_view:cardCornerRadius="4dp"
-                    card_view:cardElevation="4dp"
-                    card_view:cardPreventCornerOverlap="true"
-                    card_view:cardUseCompatPadding="true">
+                    android:background="@drawable/bg_language"
+                    android:gravity="center"
+                    android:paddingBottom="5dp"
+                    android:paddingTop="5dp"
+                    app:rv_alpha="210"
+                    app:rv_rippleDuration="100">
 
-                    <com.andexert.library.RippleView
-                        rv_centered="true"
-                        android:layout_width="wrap_content"
+                    <TextView
+                        android:id="@+id/language_tv_id"
+                        android:layout_width="120dp"
                         android:layout_height="wrap_content"
-                        android:background="@color/default_pressed"
                         android:gravity="center"
-                        android:paddingBottom="5dp"
-                        android:paddingTop="5dp"
-                        app:rv_alpha="210"
-                        app:rv_rippleDuration="100">
-
-                        <TextView
-                            android:id="@+id/language_tv_id"
-                            android:layout_width="120dp"
-                            android:layout_height="wrap_content"
-                            android:gravity="center"
-                            android:text="Language"
-                            android:textColor="@color/black"
-                            android:textSize="15sp" />
-                    </com.andexert.library.RippleView>
-                </android.support.v7.widget.CardView>
+                        android:text="Language"
+                        android:textSize="15sp" />
+                </com.andexert.library.RippleView>
             </RelativeLayout>
         </android.support.v7.widget.CardView>
 
@@ -142,6 +130,72 @@
             card_view:cardCornerRadius="4dp"
             card_view:cardElevation="2dp"
             card_view:cardPreventCornerOverlap="true"
-            card_view:cardUseCompatPadding="true"></android.support.v7.widget.CardView>
+            card_view:cardUseCompatPadding="true">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                android:gravity="center">
+
+                <TextView
+                    android:id="@+id/timer_tv_id"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_marginLeft="20dp"
+                    android:gravity="center"
+                    android:text="00:00:00"
+                    android:textSize="16sp" />
+
+                <FrameLayout
+                    android:id="@+id/record_fl_id"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginRight="20dp">
+
+                    <FrameLayout
+                        android:id="@+id/record_press_fl_id"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:visibility="gone">
+
+                        <ImageView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:background="@drawable/bg_record_circle_press" />
+
+                        <ImageView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:src="@drawable/mic_pressed" />
+                    </FrameLayout>
+
+                    <FrameLayout
+                        android:id="@+id/record_normal_fl_id"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content">
+
+                        <ImageView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:background="@drawable/bg_record_circle" />
+
+                        <ImageView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:src="@drawable/mic" />
+                    </FrameLayout>
+                </FrameLayout>
+
+            </RelativeLayout>
+        </android.support.v7.widget.CardView>
+
     </LinearLayout>
 </ScrollView>
