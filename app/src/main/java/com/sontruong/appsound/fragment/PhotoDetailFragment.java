@@ -25,6 +25,7 @@ import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
@@ -184,7 +185,26 @@ public class PhotoDetailFragment extends Fragment implements OnClickListener, Vi
 
     @Override
     public void onDestroy() {
-        // TODO Auto-generated method stub
+        mLoadingKeepGoing = false;
+        closeThread(mLoadSoundFileThread);
+        mLoadSoundFileThread = null;
+        if(mProgressDialog != null) {
+            mProgressDialog.dismiss();
+            mProgressDialog = null;
+        }
+        if(mAlertDialog != null) {
+            mAlertDialog.dismiss();
+            mAlertDialog = null;
+        }
+
+        if (mPlayer != null) {
+            if (mPlayer.isPlaying() || mPlayer.isPaused()) {
+                mPlayer.stop();
+            }
+            mPlayer.release();
+            mPlayer = null;
+        }
+
         super.onDestroy();
     }
 
@@ -223,6 +243,15 @@ public class PhotoDetailFragment extends Fragment implements OnClickListener, Vi
         }
     }
 
+    private void closeThread(Thread thread) {
+        if (thread != null && thread.isAlive()) {
+            try {
+                thread.join();
+            } catch (InterruptedException e) {
+            }
+        }
+    }
+
     private void onWaveformShow() {
         if (waveformAvailable()) {
             loadFromFile(mRecordPath);
@@ -235,7 +264,7 @@ public class PhotoDetailFragment extends Fragment implements OnClickListener, Vi
     }
 
     private void showDialogWaveformNotAvailable() {
-
+        Toast.makeText(getActivity(),"record file not added yet", Toast.LENGTH_SHORT).show();
     }
 
     private boolean waveformAvailable() {
