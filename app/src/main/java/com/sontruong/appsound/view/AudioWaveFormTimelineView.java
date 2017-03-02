@@ -204,23 +204,23 @@ public class AudioWaveFormTimelineView extends View {
 
     @Override
     protected void onDraw(Canvas canvas) {
-        int width = getMeasuredWidth();
+        int width = getMeasuredWidth()- AndroidUtilities.dp(36);
         int height = getMeasuredHeight();
-        int startX = (int)(width * progressLeft);
-        int midX = (int)(width * progressMidle);
-        int endX = (int)(width * progressRight);
+        int startX = (int)(width * progressLeft) + AndroidUtilities.dp(16);
+        int midX = (int)(width * progressMidle) + AndroidUtilities.dp(16);
+        int endX = (int)(width * progressRight) + AndroidUtilities.dp(16);
 
         canvas.save();
-        canvas.clipRect(0, 0, width + AndroidUtilities.dp(2), height);
+        canvas.clipRect(AndroidUtilities.dp(16), 0, width + AndroidUtilities.dp(20), height);
 
-        canvas.drawRect(0, 0, startX, height, paint2);
-        canvas.drawRect(endX + AndroidUtilities.dp(2), 0, + width + AndroidUtilities.dp(2), height, paint2);
+        canvas.drawRect(AndroidUtilities.dp(16), AndroidUtilities.dp(2), startX, height - AndroidUtilities.dp(2), paint2);
+        canvas.drawRect(endX + AndroidUtilities.dp(4), AndroidUtilities.dp(2), AndroidUtilities.dp(16) + width + AndroidUtilities.dp(4), height - AndroidUtilities.dp(2), paint2);
 
         canvas.drawRect(startX, 0, startX + AndroidUtilities.dp(2), height, paint);
         canvas.drawRect(midX, 0, midX + AndroidUtilities.dp(2), height, paint);
-        canvas.drawRect(endX, 0, endX + AndroidUtilities.dp(2), height, paint);
-        canvas.drawRect(startX + AndroidUtilities.dp(2), 0, endX + AndroidUtilities.dp(2), AndroidUtilities.dp(2), paint);
-        canvas.drawRect(startX + AndroidUtilities.dp(2), height - AndroidUtilities.dp(2), endX + AndroidUtilities.dp(2), height, paint);
+        canvas.drawRect(endX + AndroidUtilities.dp(2), 0, endX + AndroidUtilities.dp(4), height, paint);
+        canvas.drawRect(startX + AndroidUtilities.dp(2), 0, endX + AndroidUtilities.dp(4), AndroidUtilities.dp(2), paint);
+        canvas.drawRect(startX + AndroidUtilities.dp(2), height - AndroidUtilities.dp(2), endX + AndroidUtilities.dp(4), height, paint);
         canvas.restore();
 
         canvas.drawCircle(startX, getMeasuredHeight() / 2, AndroidUtilities.dp(8), paint);
