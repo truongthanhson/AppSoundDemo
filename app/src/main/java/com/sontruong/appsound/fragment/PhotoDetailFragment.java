@@ -37,11 +37,15 @@ import com.sontruong.appsound.soundfile.WaveformManager;
 import com.sontruong.appsound.utils.AndroidUtilities;
 import com.sontruong.appsound.soundfile.VoiceRecorder;
 import com.sontruong.appsound.utils.Constants;
+import com.sontruong.appsound.utils.CountUpTimer;
 import com.sontruong.appsound.utils.Database;
 import com.sontruong.appsound.utils.StringUtils;
 import com.sontruong.appsound.view.AudioWaveFormTimelineView;
 
 import java.io.File;
+
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class PhotoDetailFragment extends Fragment implements OnClickListener, View.OnTouchListener {
     private View mView;
@@ -70,6 +74,7 @@ public class PhotoDetailFragment extends Fragment implements OnClickListener, Vi
     private Thread mLoadSoundFileThread;
     private float[] mSegmentPos = new float[]{0.0f, 0.5f, 1.0f};
     private String mRecordPath;
+    private CountUpTimer mTimer;
     private static final String TAG = "PhotoDetailFragment";
 
     @Override
@@ -163,6 +168,14 @@ public class PhotoDetailFragment extends Fragment implements OnClickListener, Vi
         mRecordButton = (FrameLayout) mView.findViewById(R.id.record_fl_id);
         mRecordButton.setOnTouchListener(this);
         mRecordPath = Database.getInstance().getPhotoRecord(mPhotoId);
+
+        mTimerText = (TextView) mView.findViewById(R.id.timer_tv_id);
+
+        mTimer = new CountUpTimer(Constants.MAX_AUDIO_RECORD_TIME_MS) {
+            public void onTick(int second) {
+                mTimerText.setText(String.valueOf(formatTime(second)));
+            }
+        };
     }
 
 
@@ -341,12 +354,14 @@ public class PhotoDetailFragment extends Fragment implements OnClickListener, Vi
                 mRecordPath = Environment.getExternalStorageDirectory() + Constants.PATH_APP + "/" + Constants.PATH_SOUND + "/" + mPhotoId + "_record.3gpp";
                 VoiceRecorder.getInstance().startRecord(mRecordPath);
                 scaleView(view, 1.5f, 1f);
+                mTimer.start();
                 break;
             case MotionEvent.ACTION_UP:
                 mView.findViewById(R.id.record_normal_fl_id).setVisibility(View.VISIBLE);
                 mView.findViewById(R.id.record_press_fl_id).setVisibility(View.GONE);
                 VoiceRecorder.getInstance().endRecord();
                 Database.getInstance().updatePhotoRecord(mPhotoId, mRecordPath);
+                mTimer.cancel();
                 break;
             case MotionEvent.ACTION_MOVE:
                 break;
@@ -365,5 +380,13 @@ public class PhotoDetailFragment extends Fragment implements OnClickListener, Vi
         anim.setFillAfter(true); // Needed to keep the result of the animation
         anim.setDuration(1000);
         v.startAnimation(anim);
+    }
+
+    public String formatTime(int totalSecs) {
+        int hours = totalSecs / 3600;
+        int minutes = (totalSecs % 3600) / 60;
+        int seconds = totalSecs % 60;
+        String timeString = String.format("%02d:%02d:%02d", hours, minutes, seconds);
+        return timeString;
     }
 }
