@@ -2,6 +2,7 @@
 package com.sontruong.appsound.adapter;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,6 +12,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.sontruong.appsound.R;
+import com.sontruong.appsound.utils.Database;
 
 import java.util.List;
 
@@ -22,10 +24,13 @@ public class LanguageAdapter extends BaseAdapter {
 
     private List<Boolean> mChecked;
 
-    public LanguageAdapter(Context context, List<String> languages, List<Boolean> checked) {
+    private int mPhotoId;
+
+    public LanguageAdapter(Context context, int id, List<String> languages, List<Boolean> checked) {
         this.mContext = context;
         this.mLanguages = languages;
         this.mChecked = checked;
+        this.mPhotoId = id;
 
     }
 
@@ -54,7 +59,7 @@ public class LanguageAdapter extends BaseAdapter {
             convertView = layoutInflater.inflate(R.layout.item_language_layout, parent, false);
 
             holder.mText = (TextView) convertView.findViewById(R.id.language_item_tv_id);
-            holder.mCheck = (ImageView) convertView.findViewById(R.id.check_item_tv_id);
+            holder.mCheck = (ImageView) convertView.findViewById(R.id.checked_item_iv_id);
             holder.mLanguage = (RelativeLayout) convertView.findViewById(R.id.language_item_rl_id);
             convertView.setTag(holder);
         } else {
@@ -75,6 +80,7 @@ public class LanguageAdapter extends BaseAdapter {
                 }
                 mChecked.set(position, true);
                 notifyDataSetChanged();
+                Database.getInstance().updateActiveLanguage(mPhotoId, mLanguages.get(position));
             }
         });
 

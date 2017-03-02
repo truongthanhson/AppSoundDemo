@@ -3,8 +3,11 @@ package com.sontruong.appsound.utils;
 import android.support.v4.util.Pair;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
+import java.util.Set;
 
 /**
  * Created by Truong Thanh Son on 11/6/2015.
@@ -46,11 +49,19 @@ public class Database {
     private List<Pair<String, String>> getLanguages() {
         Locale[] locales = Locale.getAvailableLocales();
         List<Pair<String, String>> languages = new ArrayList<>();
+        List<String> localeLang = new ArrayList<>();
         for (Locale l : locales) {
             String lang = l.getDisplayLanguage();
             if (lang != null && !lang.isEmpty())
-                languages.add(new Pair<>(lang, ""));
+                localeLang.add(lang);
         }
+
+        List<String> uniqueLang = new ArrayList<>(new HashSet<String>(localeLang));
+        Collections.sort(uniqueLang, String.CASE_INSENSITIVE_ORDER);
+        for (int i = 0; i < uniqueLang.size(); i++) {
+            languages.add(new Pair<>(uniqueLang.get(i), ""));
+        }
+
         return languages;
     }
 
@@ -122,6 +133,10 @@ public class Database {
 
     public String getActiveLanguage(int index) {
         return mActiveLang.get(index);
+    }
+
+    public void updateActiveLanguage(int index, String lang) {
+        mActiveLang.set(index, lang);
     }
 
     public boolean checkActiveLanguage(int index) {

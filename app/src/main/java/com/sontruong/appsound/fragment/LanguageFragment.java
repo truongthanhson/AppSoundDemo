@@ -62,7 +62,7 @@ public class LanguageFragment extends Fragment implements OnClickListener {
         super.onCreate(savedInstanceState);
         Bundle args = getArguments();
         if (args != null) {
-            mPhotoId = args.getInt(Constants.KEY_PHOTO_GALLERY);
+            mPhotoId = args.getInt(Constants.KEY_LANGUAGE);
         }
     }
 
@@ -80,13 +80,13 @@ public class LanguageFragment extends Fragment implements OnClickListener {
         ArrayList<Boolean> checked = new ArrayList<>();
         for (int i = 0; i < language.size(); i++) {
             if (language.get(i).equals(Database.getInstance().getActiveLanguage(mPhotoId))) {
-                checked.set(i, true);
+                checked.add(true);
             } else {
-                checked.set(i, false);
+                checked.add(false);
             }
         }
         mLanguages = (ListView) mView.findViewById(R.id.language_lv_id);
-        LanguageAdapter adapter = new LanguageAdapter(getActivity(), language, checked);
+        LanguageAdapter adapter = new LanguageAdapter(getActivity(), mPhotoId, language, checked);
         mLanguages.setAdapter(adapter);
     }
 

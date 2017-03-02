@@ -33,9 +33,9 @@ import com.sontruong.appsound.R;
 import com.sontruong.appsound.listener.HomeActivityDelegate;
 import com.sontruong.appsound.soundfile.SamplePlayer;
 import com.sontruong.appsound.soundfile.SoundFile;
+import com.sontruong.appsound.soundfile.VoiceRecorder;
 import com.sontruong.appsound.soundfile.WaveformManager;
 import com.sontruong.appsound.utils.AndroidUtilities;
-import com.sontruong.appsound.soundfile.VoiceRecorder;
 import com.sontruong.appsound.utils.Constants;
 import com.sontruong.appsound.utils.CountUpTimer;
 import com.sontruong.appsound.utils.Database;
@@ -43,9 +43,6 @@ import com.sontruong.appsound.utils.StringUtils;
 import com.sontruong.appsound.view.AudioWaveFormTimelineView;
 
 import java.io.File;
-
-import java.util.Timer;
-import java.util.TimerTask;
 
 public class PhotoDetailFragment extends Fragment implements OnClickListener, View.OnTouchListener {
     private View mView;
@@ -107,13 +104,13 @@ public class PhotoDetailFragment extends Fragment implements OnClickListener, Vi
 
     private void initView() {
         mEditText = (EditText) mView.findViewById(R.id.description_et_id);
-        if (Database.getInstance().checkDescriptionLanguage(mPhotoId)) {
-            mEditText.setText(Database.getInstance().getDescriptionLanguage(mPhotoId));
-        }
-
         mLangText = (TextView) mView.findViewById(R.id.language_tv_id);
+
         if (Database.getInstance().checkActiveLanguage(mPhotoId)) {
             mLangText.setText(Database.getInstance().getActiveLanguage(mPhotoId));
+            if (Database.getInstance().checkDescriptionLanguage(mPhotoId)) {
+                mEditText.setText(Database.getInstance().getDescriptionLanguage(mPhotoId));
+            }
         }
 
         mImageView = (ImageView) mView.findViewById(R.id.photo_detail_img_id);
@@ -127,7 +124,7 @@ public class PhotoDetailFragment extends Fragment implements OnClickListener, Vi
         mEditButton = (ImageButton) mView.findViewById(R.id.photo_edit_btn_id);
         mEditButton.setOnClickListener(this);
 
-        mWaveformImg = (ImageView)mView.findViewById(R.id.waveform);
+        mWaveformImg = (ImageView) mView.findViewById(R.id.waveform);
 
         mTimelineView = (AudioWaveFormTimelineView) mView.findViewById(R.id.timeline);
         mTimelineView.setDelegate(new AudioWaveFormTimelineView.AudioWaveFormTimelineViewDelegate() {
@@ -176,6 +173,7 @@ public class PhotoDetailFragment extends Fragment implements OnClickListener, Vi
                 mTimerText.setText(String.valueOf(formatTime(second)));
             }
         };
+        mView.findViewById(R.id.language_button_id).setOnClickListener(this);
     }
 
 
@@ -217,17 +215,21 @@ public class PhotoDetailFragment extends Fragment implements OnClickListener, Vi
             case R.id.photo_detail_img_id:
                 onWaveformShow();
                 break;
+            case R.id.language_button_id:
+                delegate.onStartLanguageFragment(mPhotoId);
+                break;
             default:
                 break;
         }
     }
 
     private void onWaveformShow() {
-        if(waveformAvailable()){
+        if (waveformAvailable()) {
             loadFromFile(mRecordPath);
-        }else{
+        } else {
             mView.findViewById(R.id.waveform_container).setVisibility(View.GONE);
             mImageView.setVisibility(View.VISIBLE);
+            mEditButton.setVisibility(View.VISIBLE);
             showDialogWaveformNotAvailable();
         }
     }
@@ -297,6 +299,7 @@ public class PhotoDetailFragment extends Fragment implements OnClickListener, Vi
         };
         mLoadSoundFileThread.start();
     }
+
     private synchronized void handlePause() {
         if (mPlayer != null && mPlayer.isPlaying()) {
             mPlayer.pause();
@@ -333,6 +336,7 @@ public class PhotoDetailFragment extends Fragment implements OnClickListener, Vi
 
         mView.findViewById(R.id.waveform_container).setVisibility(View.VISIBLE);
         mImageView.setVisibility(View.GONE);
+        mEditButton.setVisibility(View.GONE);
     }
 
     @Override

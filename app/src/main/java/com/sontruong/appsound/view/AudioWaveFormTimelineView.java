@@ -79,7 +79,7 @@ public class AudioWaveFormTimelineView extends View {
         int endX = (int)(width * progressRight);
 
         if (event.getAction() == MotionEvent.ACTION_DOWN) {
-            int additionWidth = AndroidUtilities.dp(12);
+            int additionWidth = AndroidUtilities.dp(30);
             if (startX - additionWidth <= x && x <= startX + additionWidth && y >= 0 && y <= getMeasuredHeight()) {
                 pressedLeft = true;
                 pressDx = (int)(x - startX);
