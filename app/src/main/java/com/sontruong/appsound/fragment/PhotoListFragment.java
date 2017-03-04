@@ -1,6 +1,7 @@
 
 package com.sontruong.appsound.fragment;
 
+import android.app.Activity;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
@@ -16,13 +17,24 @@ import android.view.ViewGroup;
 import com.sontruong.appsound.PhotoActivity;
 import com.sontruong.appsound.R;
 import com.sontruong.appsound.adapter.PhotoListAdapter;
+import com.sontruong.appsound.listener.HomeActivityDelegate;
 import com.sontruong.appsound.utils.Constants;
 import com.sontruong.appsound.utils.Database;
 
 public class PhotoListFragment extends Fragment implements OnClickListener {
     private View mView;
-
+    private HomeActivityDelegate delegate;
     private static final String TAG = "PhotoListFragment";
+
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        try {
+            delegate = (HomeActivityDelegate) activity;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -88,6 +100,18 @@ public class PhotoListFragment extends Fragment implements OnClickListener {
             if (searchItem != null) {
                 searchItem.setVisible(false);
             }
+            MenuItem plusItem = menu.findItem(R.id.action_plus);
+            if (plusItem != null) {
+                plusItem.setVisible(true);
+            }
         }
+    }
+
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == R.id.action_plus) {
+        }
+        return super.onOptionsItemSelected(item);
     }
 }

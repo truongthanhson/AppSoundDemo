@@ -15,7 +15,7 @@ import java.util.Set;
 public class Database {
     private static Database dataBase = null;
     private static final String IMAGE_URLS[] = {
-            "http://api.learn2crack.com/android/images/donut.png",
+            /*"http://api.learn2crack.com/android/images/donut.png",
             "http://api.learn2crack.com/android/images/eclair.png",
             "http://api.learn2crack.com/android/images/froyo.png",
             "http://api.learn2crack.com/android/images/ginger.png",
@@ -24,7 +24,47 @@ public class Database {
             "http://api.learn2crack.com/android/images/jellybean.png",
             "http://api.learn2crack.com/android/images/kitkat.png",
             "http://api.learn2crack.com/android/images/lollipop.png",
-            "http://api.learn2crack.com/android/images/marshmallow.png"
+            "http://api.learn2crack.com/android/images/marshmallow.png"*/
+            "http://www.mapsofworld.com/usa/presidents/images/large_image/George_Washington.jpg",
+            "http://www.mapsofworld.com/usa/presidents/images/large_image/John_Quincy_Adams.jpg",
+            "http://www.mapsofworld.com/usa/presidents/images/large_image/Thomas_Jefferson.jpg",
+            "http://www.mapsofworld.com/usa/presidents/images/large_image/James_Madison.jpg",
+            "http://www.mapsofworld.com/usa/presidents/images/large_image/James_Monroe.jpg",
+            "http://www.mapsofworld.com/usa/presidents/images/large_image/Andrew_jackson.jpg",
+            "http://www.mapsofworld.com/usa/presidents/images/large_image/Martin_Van-_Buren.jpg",
+            "http://www.mapsofworld.com/usa/presidents/images/large_image/William_Henry_Harrison.jpg",
+            "http://www.mapsofworld.com/usa/presidents/images/large_image/John_Tyler.jpg",
+            "http://www.mapsofworld.com/usa/presidents/images/large_image/James_Knox_Polk.jpg",
+            "http://www.mapsofworld.com/usa/presidents/images/large_image/Zachary_Taylor.jpg",
+            "http://www.mapsofworld.com/usa/presidents/images/large_image/Millard_Fillmore.jpg",
+            "http://www.mapsofworld.com/usa/presidents/images/large_image/Franklin_Pierce.jpg",
+            "http://www.mapsofworld.com/usa/presidents/images/large_image/JamesBuchanan-small.jpg",
+            "http://www.mapsofworld.com/usa/presidents/images/large_image/Abraham_Lincoln.jpg",
+            "http://www.mapsofworld.com/usa/presidents/images/large_image/Andrew_Johnson.jpg",
+            "http://www.mapsofworld.com/usa/presidents/images/large_image/Ulysses_S._Grant.jpg",
+            "http://www.mapsofworld.com/usa/presidents/images/large_image/Rutherford_B._Hayes.jpg",
+            "http://www.mapsofworld.com/usa/presidents/images/large_image/James_Garfield_portrait.jpg",
+            "http://www.mapsofworld.com/usa/presidents/images/large_image/Chester_A.jpg",
+            "http://www.mapsofworld.com/usa/presidents/images/large_image/Grover_Cleveland.jpg",
+            "http://www.mapsofworld.com/usa/presidents/images/large_image/Benjamin_Harrison.jpg",
+            "http://www.mapsofworld.com/usa/presidents/images/large_image/Grover_Cleveland.jpg",
+            "http://www.mapsofworld.com/usa/presidents/images/large_image/Theodore_Roosevelt.jpg",
+            "http://www.mapsofworld.com/usa/presidents/images/large_image/William_Howard_Taft.jpg",
+            "http://www.mapsofworld.com/usa/presidents/images/large_image/Woodrow_Wilson.jpg",
+            "http://www.mapsofworld.com/usa/presidents/images/large_image/Calvin_Coolidge.jpg",
+            "http://www.mapsofworld.com/usa/presidents/images/large_image/Herbert_Clark_Hoover.jpg",
+            "http://www.mapsofworld.com/usa/presidents/images/large_image/Franklin_Roosevelt.jpg",
+            "http://www.mapsofworld.com/usa/presidents/images/large_image/Harry_Truman.jpg",
+            "http://www.mapsofworld.com/usa/presidents/images/large_image/John_F_Kennedy.jpg",
+            "http://www.mapsofworld.com/usa/presidents/images/large_image/Lyndon_B.jpg",
+            "http://www.mapsofworld.com/usa/presidents/images/large_image/Richard_Nixon.jpg",
+            "http://www.mapsofworld.com/usa/presidents/images/large_image/Gerald_R.jpg",
+            "http://www.mapsofworld.com/usa/presidents/images/large_image/Ronald_Reagan.jpg",
+            "http://www.mapsofworld.com/usa/presidents/images/large_image/George_H.jpg",
+            "http://www.mapsofworld.com/usa/presidents/images/large_image/Bill_Clinton.jpg",
+            "http://www.mapsofworld.com/usa/presidents/images/large_image/George_W_Bush.jpg",
+            "http://www.mapsofworld.com/usa/presidents/images/large_image/Barack_Obama-330.jpg",
+            "http://www.mapsofworld.com/elections/usa/images/donald-trump.jpg"
     };
 
     private ArrayList<String> mPhotoList;
@@ -119,12 +159,12 @@ public class Database {
         return !(getDescriptionLanguage(index).isEmpty());
     }
 
-    public void updatePhotoLanguage(int index, Pair<String, String> pair) {
+    public void updatePhotoLanguage(int index, String lang) {
         List<Pair<String, String>> description = new ArrayList<>();
         description = mPhotoLang.get(index);
         for (int i = 0; i < description.size(); i++) {
-            if (description.get(i).first.equals(pair.first)) {
-                description.set(i, pair);
+            if (description.get(i).first.equals(getActiveLanguage(index))) {
+                description.set(i, new Pair<>(getActiveLanguage(index), lang));
                 break;
             }
         }

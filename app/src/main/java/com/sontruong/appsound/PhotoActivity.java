@@ -103,6 +103,10 @@ public class PhotoActivity extends AppCompatActivity implements HomeActivityDele
         if(cameraItem != null) {
             cameraItem.setVisible(false);
         }
+        MenuItem plusItem = menu.findItem(R.id.action_plus);
+        if (plusItem != null) {
+            plusItem.setVisible(false);
+        }
         return super.onCreateOptionsMenu(menu);
     }
 }

@@ -10,6 +10,10 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
+import android.support.v4.util.Pair;
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -37,10 +41,12 @@ import com.sontruong.appsound.soundfile.SoundFile;
 import com.sontruong.appsound.soundfile.VoiceRecorder;
 import com.sontruong.appsound.soundfile.WaveformManager;
 import com.sontruong.appsound.utils.AndroidUtilities;
+import com.sontruong.appsound.utils.AnimationUtils;
 import com.sontruong.appsound.utils.Constants;
 import com.sontruong.appsound.utils.CountUpTimer;
 import com.sontruong.appsound.utils.Database;
 import com.sontruong.appsound.utils.StringUtils;
+import com.sontruong.appsound.utils.Utils;
 import com.sontruong.appsound.view.AudioWaveFormTimelineView;
 
 import java.io.File;
@@ -50,7 +56,6 @@ public class PhotoDetailFragment extends Fragment implements OnClickListener, Vi
     private ImageView mImageView;
     private ImageButton mEditButton;
     private EditText mEditText;
-    private TextView mLangText;
     private TextView mTimerText;
     private FrameLayout mRecordButton;
     private HomeActivityDelegate delegate;
@@ -105,13 +110,10 @@ public class PhotoDetailFragment extends Fragment implements OnClickListener, Vi
 
     private void initView() {
         mEditText = (EditText) mView.findViewById(R.id.description_et_id);
-        mLangText = (TextView) mView.findViewById(R.id.language_tv_id);
-
-        if (Database.getInstance().checkActiveLanguage(mPhotoId)) {
-            mLangText.setText(Database.getInstance().getActiveLanguage(mPhotoId));
-            if (Database.getInstance().checkDescriptionLanguage(mPhotoId)) {
-                mEditText.setText(Database.getInstance().getDescriptionLanguage(mPhotoId));
-            }
+        if (Database.getInstance().checkDescriptionLanguage(mPhotoId)) {
+            mEditText.setText(Database.getInstance().getDescriptionLanguage(mPhotoId));
+        } else {
+            mEditText.setText("");
         }
 
         mImageView = (ImageView) mView.findViewById(R.id.photo_detail_img_id);
@@ -175,6 +177,7 @@ public class PhotoDetailFragment extends Fragment implements OnClickListener, Vi
             }
         };
         mView.findViewById(R.id.language_button_id).setOnClickListener(this);
+        mView.findViewById(R.id.submit_button_id).setOnClickListener(this);
     }
 
 
@@ -188,11 +191,11 @@ public class PhotoDetailFragment extends Fragment implements OnClickListener, Vi
         mLoadingKeepGoing = false;
         closeThread(mLoadSoundFileThread);
         mLoadSoundFileThread = null;
-        if(mProgressDialog != null) {
+        if (mProgressDialog != null) {
             mProgressDialog.dismiss();
             mProgressDialog = null;
         }
-        if(mAlertDialog != null) {
+        if (mAlertDialog != null) {
             mAlertDialog.dismiss();
             mAlertDialog = null;
         }
@@ -238,6 +241,14 @@ public class PhotoDetailFragment extends Fragment implements OnClickListener, Vi
             case R.id.language_button_id:
                 delegate.onStartLanguageFragment(mPhotoId);
                 break;
+            case R.id.submit_button_id:
+                if (Database.getInstance().checkActiveLanguage(mPhotoId)) {
+                    Database.getInstance().updatePhotoLanguage(mPhotoId, mEditText.getText().toString());
+                } else {
+                    mEditText.setError(getString(R.string.login_error_language));
+                    AnimationUtils.shake(getActivity().getApplicationContext(), mEditText);
+                }
+                break;
             default:
                 break;
         }
@@ -264,7 +275,7 @@ public class PhotoDetailFragment extends Fragment implements OnClickListener, Vi
     }
 
     private void showDialogWaveformNotAvailable() {
-        Toast.makeText(getActivity(),"record file not added yet", Toast.LENGTH_SHORT).show();
+        Toast.makeText(getActivity(), "record file not added yet", Toast.LENGTH_SHORT).show();
     }
 
     private boolean waveformAvailable() {
@@ -374,6 +385,10 @@ public class PhotoDetailFragment extends Fragment implements OnClickListener, Vi
             MenuItem searchItem = menu.findItem(R.id.action_camera);
             if (searchItem != null) {
                 searchItem.setVisible(false);
+            }
+            MenuItem plusItem = menu.findItem(R.id.action_plus);
+            if (plusItem != null) {
+                plusItem.setVisible(false);
             }
         }
     }

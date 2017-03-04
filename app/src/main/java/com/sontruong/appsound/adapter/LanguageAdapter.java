@@ -11,6 +11,7 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.sontruong.appsound.PhotoActivity;
 import com.sontruong.appsound.R;
 import com.sontruong.appsound.utils.Database;
 
@@ -81,6 +82,7 @@ public class LanguageAdapter extends BaseAdapter {
                 mChecked.set(position, true);
                 notifyDataSetChanged();
                 Database.getInstance().updateActiveLanguage(mPhotoId, mLanguages.get(position));
+                ((PhotoActivity)mContext).onBackPressed();
             }
         });
 

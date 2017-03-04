@@ -181,6 +181,10 @@ public class PhotoLGalleryFragment extends Fragment implements OnClickListener {
             if (searchItem != null) {
                 searchItem.setVisible(true);
             }
+            MenuItem plusItem = menu.findItem(R.id.action_plus);
+            if (plusItem != null) {
+                plusItem.setVisible(false);
+            }
         }
     }
 
