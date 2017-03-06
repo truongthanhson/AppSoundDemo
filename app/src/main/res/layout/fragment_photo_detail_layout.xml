@@ -65,28 +65,9 @@
                     android:orientation="vertical"
                     android:visibility="gone">
 
-                    <FrameLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="200dp"
-                        android:layout_alignParentTop="true">
-
-                        <ImageView
-                            android:id="@+id/waveform"
-                            android:layout_width="fill_parent"
-                            android:layout_height="fill_parent"
-                            android:layout_marginLeft="16dp"
-                            android:layout_marginRight="16dp"
-                            android:scaleType="fitXY" />
-
-                        <com.poptech.popap.view.AudioWaveFormTimelineView
-                            android:id="@+id/timeline"
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent" />
-
-                    </FrameLayout>
-
                     <LinearLayout
                         style="@style/ToolbarBackground"
+                        android:id="@+id/sound_toolbar"
                         android:layout_width="fill_parent"
                         android:layout_height="62dip"
                         android:layout_alignParentBottom="true"
@@ -114,6 +95,27 @@
                             android:src="@android:drawable/ic_media_next" />
 
                     </LinearLayout>
+
+                    <FrameLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_alignParentTop="true"
+                        android:layout_above="@id/sound_toolbar">
+
+                        <ImageView
+                            android:id="@+id/waveform"
+                            android:layout_width="fill_parent"
+                            android:layout_height="fill_parent"
+                            android:layout_marginLeft="16dp"
+                            android:layout_marginRight="16dp"
+                            android:scaleType="fitXY" />
+
+                        <com.poptech.popap.view.AudioWaveFormTimelineView
+                            android:id="@+id/timeline"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent" />
+
+                    </FrameLayout>
 
                 </RelativeLayout>
             </FrameLayout>

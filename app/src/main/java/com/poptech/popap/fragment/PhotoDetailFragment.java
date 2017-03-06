@@ -9,6 +9,7 @@ import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -42,6 +43,7 @@ import com.poptech.popap.sound.WaveformManager;
 import com.poptech.popap.utils.AndroidUtilities;
 import com.poptech.popap.utils.Constants;
 import com.poptech.popap.utils.CountUpTimer;
+import com.poptech.popap.utils.Database;
 import com.poptech.popap.utils.StringUtils;
 import com.poptech.popap.utils.Utils;
 import com.poptech.popap.view.AudioWaveFormTimelineView;
@@ -95,6 +97,36 @@ public class PhotoDetailFragment extends Fragment implements OnClickListener, Vi
         if (args != null) {
             mItemId = args.getString(Constants.KEY_PHOTO_DETAIL);
         }
+    }
+
+    private void onReloadPositionMark() {
+        if(mSoundBean == null || StringUtils.isNullOrEmpty(mSoundBean.getSoundMark())){
+            setDefaultValueMark();
+        }else {
+            String[] marks = mSoundBean.getSoundMark().split(";");
+            if(marks == null || marks.length != 3){
+                setDefaultValueMark();
+            } else{
+                try{
+                    mSegmentPos[0] = Float.valueOf(marks[0]);
+                    mSegmentPos[1] = Float.valueOf(marks[1]);
+                    mSegmentPos[2] = Float.valueOf(marks[2]);
+                }catch (Exception e){
+                    setDefaultValueMark();
+                }
+            }
+        }
+
+
+        mTimelineView.setProgressLeft(mSegmentPos[0]);
+        mTimelineView.setProgressMidle(mSegmentPos[1]);
+        mTimelineView.setProgressRight(mSegmentPos[2]);
+    }
+
+    private void setDefaultValueMark() {
+        mSegmentPos[0] = 0.0f;
+        mSegmentPos[1] = 0.5f;
+        mSegmentPos[2] = 1.0f;
     }
 
     @Override
@@ -152,18 +184,21 @@ public class PhotoDetailFragment extends Fragment implements OnClickListener, Vi
             @Override
             public void onLeftProgressChanged(float progress) {
                 mSegmentPos[0] = progress;
+                mSoundBean.setSoundMark(mSegmentPos[0] + ";" + mSegmentPos[1] + ";" + mSegmentPos[2]);
                 handlePause();
             }
 
             @Override
             public void onMidleProgressChanged(float progress) {
                 mSegmentPos[1] = progress;
+                mSoundBean.setSoundMark(mSegmentPos[0] + ";" + mSegmentPos[1] + ";" + mSegmentPos[2]);
                 handlePause();
             }
 
             @Override
             public void onRightProgressChanged(float progress) {
                 mSegmentPos[2] = progress;
+                mSoundBean.setSoundMark(mSegmentPos[0] + ";" + mSegmentPos[1] + ";" + mSegmentPos[2]);
                 handlePause();
             }
         });
@@ -235,14 +270,19 @@ public class PhotoDetailFragment extends Fragment implements OnClickListener, Vi
 
     @Override
     public void onResume() {
-        // TODO Auto-generated method stub
         super.onResume();
+        onReloadPositionMark();
     }
 
     @Override
     public void onStop() {
-        // TODO Auto-generated method stub
         super.onStop();
+        saveCurrentMarkPositionToDatabase();
+    }
+
+    private void saveCurrentMarkPositionToDatabase() {
+        String content = mSegmentPos[0] + ";" + mSegmentPos[1] + ";" + mSegmentPos[2];
+        PopapDatabase.getInstance(getActivity()).updateSoundMark(mItemId,content);
     }
 
     @Override
