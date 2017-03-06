@@ -20,6 +20,7 @@
             android:id="@+id/photo_img_id"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:background="@color/white"
             android:adjustViewBounds="true"
             android:clickable="true" />
     </com.andexert.library.RippleView>

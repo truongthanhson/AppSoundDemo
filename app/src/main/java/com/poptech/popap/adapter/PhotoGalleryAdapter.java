@@ -13,6 +13,8 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.poptech.popap.PhotoActivity;
 import com.poptech.popap.R;
+import com.poptech.popap.bean.PhotoBean;
+import com.poptech.popap.database.PopapDatabase;
 import com.poptech.popap.listener.HomeActivityDelegate;
 import com.poptech.popap.utils.Database;
 import com.poptech.popap.utils.Utils;
@@ -20,12 +22,12 @@ import com.poptech.popap.utils.Utils;
 import java.util.ArrayList;
 
 public class PhotoGalleryAdapter extends RecyclerView.Adapter<PhotoGalleryAdapter.ViewHolder> {
-    private ArrayList<String> image_urls;
+    private ArrayList<String> mPhotoList;
     private Context mContext;
-    private int mPhotoId;
+    private String mPhotoId;
 
-    public PhotoGalleryAdapter(Context context, int photo_id, ArrayList<String> image_urls) {
-        this.image_urls = image_urls;
+    public PhotoGalleryAdapter(Context context, String photo_id, ArrayList<String> photoList) {
+        this.mPhotoList = photoList;
         this.mPhotoId = photo_id;
         this.mContext = context;
     }
@@ -44,7 +46,7 @@ public class PhotoGalleryAdapter extends RecyclerView.Adapter<PhotoGalleryAdapte
             @Override
             public void onComplete(RippleView rippleView) {
                 if (mContext instanceof PhotoActivity) {
-                    Database.getInstance().updatePhotoList(mPhotoId, image_urls.get(position));
+                    PopapDatabase.getInstance(mContext).updatePhotoPath(mPhotoId, mPhotoList.get(position));
                     ((PhotoActivity) mContext).onBackPressed();
                 }
             }
@@ -52,7 +54,7 @@ public class PhotoGalleryAdapter extends RecyclerView.Adapter<PhotoGalleryAdapte
         });
 
         Glide.with(mContext)
-                .load(image_urls.get(position))
+                .load(mPhotoList.get(position))
                 .override(Utils.getDisplayWidth((Activity) mContext) / 3, Utils.getDisplayWidth((Activity) mContext) / 3)
                 .centerCrop()
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
@@ -62,7 +64,7 @@ public class PhotoGalleryAdapter extends RecyclerView.Adapter<PhotoGalleryAdapte
 
     @Override
     public int getItemCount() {
-        return image_urls.size();
+        return mPhotoList.size();
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {

@@ -7,6 +7,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 
 import com.andexert.library.RippleView;
 import com.bumptech.glide.Glide;
@@ -14,6 +16,7 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.poptech.popap.R;
 import com.poptech.popap.bean.PhotoBean;
 import com.poptech.popap.listener.HomeActivityDelegate;
+import com.poptech.popap.utils.StringUtils;
 import com.poptech.popap.utils.Utils;
 
 import java.util.ArrayList;
@@ -47,12 +50,19 @@ public class PhotoListAdapter extends RecyclerView.Adapter<PhotoListAdapter.View
 
         });
 
-        Glide.with(mContext)
-                .load(mPhotoList.get(position).getPhotoPath())
-                .override(Utils.getDisplayWidth((Activity) mContext) / 3, Utils.getDisplayWidth((Activity) mContext) / 3)
-                .centerCrop()
-                .diskCacheStrategy(DiskCacheStrategy.ALL)
-                .into(viewHolder.mPhotoView);
+        if (StringUtils.isNullOrEmpty(mPhotoList.get(position).getPhotoPath())) {
+            RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(
+                    Utils.getDisplayWidth((Activity) mContext) / 3,
+                    Utils.getDisplayWidth((Activity) mContext) / 3);
+            viewHolder.mPhotoView.setLayoutParams(layoutParams);
+        } else {
+            Glide.with(mContext)
+                    .load(mPhotoList.get(position).getPhotoPath())
+                    .override(Utils.getDisplayWidth((Activity) mContext) / 3, Utils.getDisplayWidth((Activity) mContext) / 3)
+                    .centerCrop()
+                    .diskCacheStrategy(DiskCacheStrategy.ALL)
+                    .into(viewHolder.mPhotoView);
+        }
 
     }
 

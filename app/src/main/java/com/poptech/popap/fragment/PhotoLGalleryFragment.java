@@ -14,7 +14,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.util.Pair;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -26,8 +25,7 @@ import android.view.ViewGroup;
 import com.poptech.popap.PhotoActivity;
 import com.poptech.popap.R;
 import com.poptech.popap.adapter.PhotoGalleryAdapter;
-import com.poptech.popap.adapter.PhotoListAdapter;
-import com.poptech.popap.listener.HomeActivityDelegate;
+import com.poptech.popap.database.PopapDatabase;
 import com.poptech.popap.utils.Constants;
 import com.poptech.popap.utils.Database;
 
@@ -40,7 +38,7 @@ public class PhotoLGalleryFragment extends Fragment implements OnClickListener {
     private View mView;
 
     private String mFilePathString;
-    private int mPhotoId;
+    private String mItemId;
 
     private static final String TAG = "PhotoGalleryFragment";
 
@@ -58,7 +56,7 @@ public class PhotoLGalleryFragment extends Fragment implements OnClickListener {
         super.onCreate(savedInstanceState);
         Bundle args = getArguments();
         if (args != null) {
-            mPhotoId = args.getInt(Constants.KEY_PHOTO_GALLERY);
+            mItemId = args.getString(Constants.KEY_PHOTO_GALLERY);
         }
     }
 
@@ -77,7 +75,7 @@ public class PhotoLGalleryFragment extends Fragment implements OnClickListener {
         recyclerView.setHasFixedSize(true);
         RecyclerView.LayoutManager layoutManager = new GridLayoutManager(getActivity(), 3);
         recyclerView.setLayoutManager(layoutManager);
-        PhotoGalleryAdapter adapter = new PhotoGalleryAdapter(getActivity(), mPhotoId, getAllImages(getActivity()));
+        PhotoGalleryAdapter adapter = new PhotoGalleryAdapter(getActivity(), mItemId, getAllImages(getActivity()));
         recyclerView.setAdapter(adapter);
     }
 
@@ -143,7 +141,7 @@ public class PhotoLGalleryFragment extends Fragment implements OnClickListener {
         });
 
         ArrayList<String> imageUrls = new ArrayList<>();
-        for(int i = 0; i < imagePairs.size(); i++) {
+        for (int i = 0; i < imagePairs.size(); i++) {
             imageUrls.add(imagePairs.get(i).second);
         }
         return imageUrls;
@@ -168,7 +166,7 @@ public class PhotoLGalleryFragment extends Fragment implements OnClickListener {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == Constants.REQUEST_AVATAR_CAPTURE && resultCode == Activity.RESULT_OK) {
-            Database.getInstance().updatePhotoList(mPhotoId, mFilePathString);
+            PopapDatabase.getInstance(getActivity()).updatePhotoPath(mItemId, mFilePathString);
             getActivity().onBackPressed();
         }
     }

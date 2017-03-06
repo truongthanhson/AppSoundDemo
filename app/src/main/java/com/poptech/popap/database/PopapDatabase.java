@@ -86,7 +86,6 @@ public class PopapDatabase extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        String LANGUAGE_LIST = "";
         // TODO Auto-generated method stub
         db.execSQL("CREATE TABLE " + Tables.PHOTOS + " ("
                 + BaseColumns._ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
@@ -101,18 +100,10 @@ public class PopapDatabase extends SQLiteOpenHelper {
                 + SoundColumns.SOUND_MARK + " TEXT NOT NULL,"
                 + "UNIQUE (" + SoundColumns.SOUND_ID + ") ON CONFLICT REPLACE)");
 
-        for (String language : Utils.getLanguages()) {
-            String[] regexChars = {"\\s+", "\\s*-\\s*", "\\s*'\\s*"};
-            for (String regex : regexChars) {
-                language = language.replaceAll(regex, "_");
-            }
-            LANGUAGE_LIST += language + " TEXT,";
-        }
         db.execSQL("CREATE TABLE " + Tables.LANGUAGES + " ("
                 + BaseColumns._ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
                 + LanguageColumns.LANGUAGE_ID + " TEXT NOT NULL,"
                 + LanguageColumns.LANGUAGE_ACTIVE + " TEXT,"
-                + LANGUAGE_LIST
                 + "UNIQUE (" + LanguageColumns.LANGUAGE_ID + ") ON CONFLICT REPLACE)");
 
         db.execSQL("PRAGMA user_version = " + DB_VERSION);
