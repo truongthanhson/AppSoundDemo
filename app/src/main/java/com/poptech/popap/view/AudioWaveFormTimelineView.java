@@ -56,7 +56,7 @@ public class AudioWaveFormTimelineView extends View {
     }
     private void init(Context context) {
         paint = new Paint();
-        paint.setColor(0xff66d1ee);
+        paint.setColor(0xffBDBDBD);
         paint2 = new Paint();
         paint2.setColor(0x7f000000);
     }
