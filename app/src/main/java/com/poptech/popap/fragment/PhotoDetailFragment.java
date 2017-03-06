@@ -12,6 +12,7 @@ import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -32,6 +33,7 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.poptech.popap.PhotoActivity;
 import com.poptech.popap.R;
 import com.poptech.popap.bean.LanguageBean;
+import com.poptech.popap.bean.LanguageItemBean;
 import com.poptech.popap.bean.PhotoBean;
 import com.poptech.popap.bean.SoundBean;
 import com.poptech.popap.database.PopapDatabase;
@@ -41,12 +43,15 @@ import com.poptech.popap.sound.SoundFile;
 import com.poptech.popap.sound.VoiceRecorder;
 import com.poptech.popap.sound.WaveformManager;
 import com.poptech.popap.utils.AndroidUtilities;
+import com.poptech.popap.utils.AnimationUtils;
 import com.poptech.popap.utils.Constants;
 import com.poptech.popap.utils.CountUpTimer;
 import com.poptech.popap.utils.Database;
 import com.poptech.popap.utils.StringUtils;
 import com.poptech.popap.utils.Utils;
 import com.poptech.popap.view.AudioWaveFormTimelineView;
+
+import org.w3c.dom.Text;
 
 import java.io.File;
 
@@ -55,12 +60,13 @@ public class PhotoDetailFragment extends Fragment implements OnClickListener, Vi
     private ImageView mImageView;
     private ImageButton mEditButton;
     private EditText mEditText;
+    private TextView mLangButton;
+    private TextView mSubmitButton;
     private TextView mTimerText;
     private FrameLayout mRecordButton;
     private HomeActivityDelegate delegate;
     private String mItemId;
     private ImageView mWaveformImg;
-
     private WaveformManager waveformManager;
     private SoundFile mSoundFile;
     private int mHeight;
@@ -100,18 +106,18 @@ public class PhotoDetailFragment extends Fragment implements OnClickListener, Vi
     }
 
     private void onReloadPositionMark() {
-        if(mSoundBean == null || StringUtils.isNullOrEmpty(mSoundBean.getSoundMark())){
+        if (mSoundBean == null || StringUtils.isNullOrEmpty(mSoundBean.getSoundMark())) {
             setDefaultValueMark();
-        }else {
+        } else {
             String[] marks = mSoundBean.getSoundMark().split(";");
-            if(marks == null || marks.length != 3){
+            if (marks == null || marks.length != 3) {
                 setDefaultValueMark();
-            } else{
-                try{
+            } else {
+                try {
                     mSegmentPos[0] = Float.valueOf(marks[0]);
                     mSegmentPos[1] = Float.valueOf(marks[1]);
                     mSegmentPos[2] = Float.valueOf(marks[2]);
-                }catch (Exception e){
+                } catch (Exception e) {
                     setDefaultValueMark();
                 }
             }
@@ -163,21 +169,42 @@ public class PhotoDetailFragment extends Fragment implements OnClickListener, Vi
             mLanguageBean.setLanguageId(mItemId);
             PopapDatabase.getInstance(getActivity()).insertLanguage(mLanguageBean);
         }
+
+        if (PopapDatabase.getInstance(getActivity()).checkLanguageItemExist(mItemId)) {
+            mLanguageBean.setLanguageItem(PopapDatabase.getInstance(getActivity()).getItemLanguage(mLanguageBean.getLanguageId()));
+        }
     }
 
     private void initView() {
+        // Edit text
         mEditText = (EditText) mView.findViewById(R.id.description_et_id);
+        setDescription();
+
+        // Language button
+        mLangButton = (TextView) mView.findViewById(R.id.language_button_id);
+        if (!StringUtils.isNullOrEmpty(mLanguageBean.getLanguageActive())) {
+            mLangButton.setText(mLanguageBean.getLanguageActive());
+        }
+        mLangButton.setOnClickListener(this);
+
+        // Submit button
+        mSubmitButton = (TextView) mView.findViewById(R.id.submit_button_id);
+        mSubmitButton.setOnClickListener(this);
+
+        // Photo view
         mImageView = (ImageView) mView.findViewById(R.id.photo_detail_img_id);
-        mImageView.setOnClickListener(this);
         Glide.with(this)
                 .load(mPhotoBean.getPhotoPath())
                 .centerCrop()
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
                 .into(mImageView);
+        mImageView.setOnClickListener(this);
 
+        // Edit photo
         mEditButton = (ImageButton) mView.findViewById(R.id.photo_edit_btn_id);
         mEditButton.setOnClickListener(this);
 
+        // Waveform view
         mWaveformImg = (ImageView) mView.findViewById(R.id.waveform);
         mTimelineView = (AudioWaveFormTimelineView) mView.findViewById(R.id.timeline);
         mTimelineView.setDelegate(new AudioWaveFormTimelineView.AudioWaveFormTimelineViewDelegate() {
@@ -208,17 +235,16 @@ public class PhotoDetailFragment extends Fragment implements OnClickListener, Vi
                 playNextSegment();
             }
         });
-
         mView.findViewById(R.id.ffwd).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 play2NextSegment();
             }
         });
-
         mHandler = new Handler();
         waveformManager = new WaveformManager(getActivity());
 
+        // Record view
         mRecordButton = (FrameLayout) mView.findViewById(R.id.record_fl_id);
         mRecordButton.setOnTouchListener(this);
         mTimerText = (TextView) mView.findViewById(R.id.timer_tv_id);
@@ -227,10 +253,13 @@ public class PhotoDetailFragment extends Fragment implements OnClickListener, Vi
                 mTimerText.setText(String.valueOf(Utils.formatTime(second)));
             }
         };
-        mView.findViewById(R.id.language_button_id).setOnClickListener(this);
-        mView.findViewById(R.id.submit_button_id).setOnClickListener(this);
     }
 
+    private void setDescription() {
+        if (!StringUtils.isNullOrEmpty(mLanguageBean.getLanguageActive())) {
+            mEditText.setText(mLanguageBean.getLanguageItemComment());
+        }
+    }
 
     @Override
     public void onDetach() {
@@ -271,6 +300,8 @@ public class PhotoDetailFragment extends Fragment implements OnClickListener, Vi
     @Override
     public void onResume() {
         super.onResume();
+        initData();
+        setDescription();
         onReloadPositionMark();
     }
 
@@ -282,7 +313,7 @@ public class PhotoDetailFragment extends Fragment implements OnClickListener, Vi
 
     private void saveCurrentMarkPositionToDatabase() {
         String content = mSegmentPos[0] + ";" + mSegmentPos[1] + ";" + mSegmentPos[2];
-        PopapDatabase.getInstance(getActivity()).updateSoundMark(mItemId,content);
+        PopapDatabase.getInstance(getActivity()).updateSoundMark(mItemId, content);
     }
 
     @Override
@@ -298,12 +329,27 @@ public class PhotoDetailFragment extends Fragment implements OnClickListener, Vi
                 delegate.onStartLanguageFragment(mItemId);
                 break;
             case R.id.submit_button_id:
-//                if (Database.getInstance().checkActiveLanguage(mItemId)) {
-//                    Database.getInstance().updatePhotoLanguage(mItemId, mEditText.getText().toString());
-//                } else {
-//                    mEditText.setError(getString(R.string.login_error_language));
-//                    AnimationUtils.shake(getActivity().getApplicationContext(), mEditText);
-//                }
+                if (!StringUtils.isNullOrEmpty(mLanguageBean.getLanguageActive())) {
+                    if (PopapDatabase.getInstance(getActivity()).checkLanguageItemExist(mItemId, mLanguageBean.getLanguageActive())) {
+                        PopapDatabase.getInstance(getActivity()).updateLanguageItemComment(
+                                mItemId,
+                                mLanguageBean.getLanguageActive(),
+                                mEditText.getText().toString()
+                        );
+                        mLanguageBean.updateLanguageComment(mEditText.getText().toString());
+                    } else {
+                        LanguageItemBean item = new LanguageItemBean();
+                        item.setLanguageItemId(mItemId);
+                        item.setLanguageItemName(mLanguageBean.getLanguageActive());
+                        item.setLanguageItemComment(mEditText.getText().toString());
+                        PopapDatabase.getInstance(getActivity()).insertLanguageItem(item);
+                        mLanguageBean.addLanguageItem(item);
+                    }
+                    Toast.makeText(getActivity(), "Submitted photo description", Toast.LENGTH_LONG).show();
+                } else {
+                    mEditText.setError(getString(R.string.login_error_language));
+                    AnimationUtils.shake(getActivity().getApplicationContext(), mEditText);
+                }
                 break;
             default:
                 break;
@@ -331,7 +377,7 @@ public class PhotoDetailFragment extends Fragment implements OnClickListener, Vi
     }
 
     private void showDialogWaveformNotAvailable() {
-        Toast.makeText(getActivity(), "record file not added yet", Toast.LENGTH_SHORT).show();
+        Toast.makeText(getActivity(), "Recorded file not added yet", Toast.LENGTH_SHORT).show();
     }
 
     private boolean waveformAvailable() {
@@ -436,9 +482,13 @@ public class PhotoDetailFragment extends Fragment implements OnClickListener, Vi
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         if (menu != null) {
-            MenuItem searchItem = menu.findItem(R.id.action_camera);
+            MenuItem searchItem = menu.findItem(R.id.action_search);
             if (searchItem != null) {
                 searchItem.setVisible(false);
+            }
+            MenuItem cameraItem = menu.findItem(R.id.action_camera);
+            if (cameraItem != null) {
+                cameraItem.setVisible(false);
             }
             MenuItem plusItem = menu.findItem(R.id.action_plus);
             if (plusItem != null) {

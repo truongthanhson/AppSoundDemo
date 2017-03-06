@@ -101,9 +101,13 @@ public class PhotoListFragment extends Fragment implements OnClickListener {
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         if (menu != null) {
-            MenuItem searchItem = menu.findItem(R.id.action_camera);
+            MenuItem searchItem = menu.findItem(R.id.action_search);
             if (searchItem != null) {
                 searchItem.setVisible(false);
+            }
+            MenuItem cameraItem = menu.findItem(R.id.action_camera);
+            if (cameraItem != null) {
+                cameraItem.setVisible(false);
             }
             MenuItem plusItem = menu.findItem(R.id.action_plus);
             if (plusItem != null) {

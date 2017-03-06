@@ -10,16 +10,13 @@ import android.provider.BaseColumns;
 import android.util.Log;
 
 import com.poptech.popap.bean.LanguageBean;
+import com.poptech.popap.bean.LanguageItemBean;
 import com.poptech.popap.bean.PhotoBean;
 import com.poptech.popap.bean.SoundBean;
-import com.poptech.popap.utils.Utils;
 
 import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.List;
 
 
 /**
@@ -42,9 +39,6 @@ public class PopapDatabase extends SQLiteOpenHelper {
 
     private SQLiteDatabase mSQLite;
 
-
-    private Context mContext;
-
     private String mPackageName;
 
     private String mPath;
@@ -53,6 +47,7 @@ public class PopapDatabase extends SQLiteOpenHelper {
         String PHOTOS = "photos";
         String SOUNDS = "sounds";
         String LANGUAGES = "languages";
+        String LANGUAGE_ITEMS = "language_items";
     }
 
     public interface PhotoColumns {
@@ -71,10 +66,15 @@ public class PopapDatabase extends SQLiteOpenHelper {
         String LANGUAGE_ACTIVE = "language_active";
     }
 
+    public interface LanguageItemColumns {
+        String LANGUAGE_ITEM_ID = "language_item_id";
+        String LANGUAGE_ITEM_NAME = "language_item_name";
+        String LANGUAGE_ITEM_COMMENT = "language_item_comment";
+    }
+
     public PopapDatabase(Context context) {
         super(context, DATABASE_NAME, null, DB_VERSION);
         // TODO Auto-generated constructor stub
-        mContext = context;
         mPackageName = context.getPackageName();
         if (android.os.Build.VERSION.SDK_INT >= 17) {
             this.mPath = context.getApplicationInfo().dataDir + "/databases/";
@@ -105,6 +105,12 @@ public class PopapDatabase extends SQLiteOpenHelper {
                 + LanguageColumns.LANGUAGE_ID + " TEXT NOT NULL,"
                 + LanguageColumns.LANGUAGE_ACTIVE + " TEXT,"
                 + "UNIQUE (" + LanguageColumns.LANGUAGE_ID + ") ON CONFLICT REPLACE)");
+
+        db.execSQL("CREATE TABLE " + Tables.LANGUAGE_ITEMS + " ("
+                + BaseColumns._ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
+                + LanguageItemColumns.LANGUAGE_ITEM_ID + " TEXT NOT NULL,"
+                + LanguageItemColumns.LANGUAGE_ITEM_NAME + " TEXT,"
+                + LanguageItemColumns.LANGUAGE_ITEM_COMMENT + " TEXT)");
 
         db.execSQL("PRAGMA user_version = " + DB_VERSION);
         Log.d("PopapDatabase", "onCreate");
@@ -574,6 +580,160 @@ public class PopapDatabase extends SQLiteOpenHelper {
             }
 
             return language;
+        }
+    }
+
+
+    public long updateLanguageActive(String id, String language) {
+        long ret = 0;
+        ContentValues contentValues = new ContentValues();
+        synchronized (this) {
+            try {
+                openDatabase();
+                if (mSQLite == null) {
+                    return -1;
+                }
+                contentValues.put(LanguageColumns.LANGUAGE_ACTIVE, language);
+
+                String sql = LanguageColumns.LANGUAGE_ID + " = ?";
+                String[] params = {id};
+                ret = mSQLite.update(Tables.LANGUAGES, contentValues, sql, params);
+                return ret;
+            } catch (Exception exception) {
+                exception.printStackTrace();
+                return -1;
+            } finally {
+                closeDatabase();
+            }
+        }
+    }
+
+    public boolean checkLanguageItemExist(String id) {
+        boolean ret = false;
+        synchronized (this) {
+            Cursor cursor = null;
+            try {
+                openDatabase();
+                if (mSQLite == null) {
+                    return false;
+                }
+                String queryStatement = "SELECT * FROM " + Tables.LANGUAGE_ITEMS + " WHERE " + LanguageItemColumns.LANGUAGE_ITEM_ID + " = ?";
+                String[] selectionArgs = new String[]{id};
+                cursor = mSQLite.rawQuery(queryStatement, selectionArgs);
+                if (cursor != null && cursor.getCount() > 0)
+                    ret = true;
+            } catch (Exception e) {
+                e.printStackTrace();
+            } finally {
+                closeDatabase();
+            }
+        }
+        return ret;
+    }
+
+    public boolean checkLanguageItemExist(String id, String language) {
+        boolean ret = false;
+        synchronized (this) {
+            Cursor cursor = null;
+            try {
+                openDatabase();
+                if (mSQLite == null) {
+                    return false;
+                }
+                String queryStatement = "SELECT * FROM " + Tables.LANGUAGE_ITEMS + " WHERE " + LanguageItemColumns.LANGUAGE_ITEM_ID + " = ? AND " + LanguageItemColumns.LANGUAGE_ITEM_NAME + " = ?";
+                String[] selectionArgs = new String[]{id, language};
+                cursor = mSQLite.rawQuery(queryStatement, selectionArgs);
+                if (cursor != null && cursor.getCount() > 0)
+                    ret = true;
+            } catch (Exception e) {
+                e.printStackTrace();
+            } finally {
+                closeDatabase();
+            }
+        }
+        return ret;
+    }
+
+    public long insertLanguageItem(LanguageItemBean item) {
+        long ret = 0;
+        synchronized (this) {
+            try {
+                openDatabase();
+                if (mSQLite == null) {
+                    return -1;
+                }
+                ContentValues contentValues = new ContentValues();
+                contentValues.put(LanguageItemColumns.LANGUAGE_ITEM_ID, item.getLanguageItemId());
+                contentValues.put(LanguageItemColumns.LANGUAGE_ITEM_NAME, item.getLanguageItemName());
+                contentValues.put(LanguageItemColumns.LANGUAGE_ITEM_COMMENT, item.getLanguageItemComment());
+                ret = mSQLite.insert(Tables.LANGUAGE_ITEMS, null, contentValues);
+
+                return ret;
+            } catch (Exception e) {
+                e.printStackTrace();
+                return -1;
+            } finally {
+                closeDatabase();
+            }
+        }
+    }
+
+    public List<LanguageItemBean> getItemLanguage(String id) {
+        synchronized (this) {
+            List<LanguageItemBean> itemList = new ArrayList<>();
+            Cursor cursor = null;
+            try {
+                openDatabase();
+                if (mSQLite == null) {
+                    return null;
+                }
+                String queryStatement = "SELECT * FROM " + Tables.LANGUAGE_ITEMS + " WHERE " + LanguageItemColumns.LANGUAGE_ITEM_ID + " = ?";
+                String[] selectionArgs = new String[]{id};
+                cursor = mSQLite.rawQuery(queryStatement, selectionArgs);
+                if (cursor != null) {
+                    if (cursor.moveToFirst()) {
+                        do {
+                            LanguageItemBean item = new LanguageItemBean();
+                            item.setLanguageItemId(cursor.getString(cursor.getColumnIndex(LanguageItemColumns.LANGUAGE_ITEM_ID)));
+                            item.setLanguageItemName(cursor.getString(cursor.getColumnIndex(LanguageItemColumns.LANGUAGE_ITEM_NAME)));
+                            item.setLanguageItemComment(cursor.getString(cursor.getColumnIndex(LanguageItemColumns.LANGUAGE_ITEM_COMMENT)));
+                            itemList.add(item);
+                        } while (cursor.moveToNext());
+                    }
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            } finally {
+                if (cursor != null) {
+                    cursor.close();
+                }
+                closeDatabase();
+            }
+            return itemList;
+        }
+    }
+
+    public long updateLanguageItemComment(String id, String language, String comment) {
+        long ret = 0;
+        ContentValues contentValues = new ContentValues();
+        synchronized (this) {
+            try {
+                openDatabase();
+                if (mSQLite == null) {
+                    return -1;
+                }
+                contentValues.put(LanguageItemColumns.LANGUAGE_ITEM_COMMENT, comment);
+
+                String sql = LanguageItemColumns.LANGUAGE_ITEM_ID + " = ? AND " + LanguageItemColumns.LANGUAGE_ITEM_NAME + " = ?";
+                String[] params = {id, language};
+                ret = mSQLite.update(Tables.LANGUAGE_ITEMS, contentValues, sql, params);
+                return ret;
+            } catch (Exception exception) {
+                exception.printStackTrace();
+                return -1;
+            } finally {
+                closeDatabase();
+            }
         }
     }
 

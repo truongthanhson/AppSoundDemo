@@ -66,8 +66,8 @@
                     android:visibility="gone">
 
                     <LinearLayout
-                        style="@style/ToolbarBackground"
                         android:id="@+id/sound_toolbar"
+                        style="@style/ToolbarBackground"
                         android:layout_width="fill_parent"
                         android:layout_height="62dip"
                         android:layout_alignParentBottom="true"
@@ -99,8 +99,8 @@
                     <FrameLayout
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:layout_alignParentTop="true"
-                        android:layout_above="@id/sound_toolbar">
+                        android:layout_above="@id/sound_toolbar"
+                        android:layout_alignParentTop="true">
 
                         <ImageView
                             android:id="@+id/waveform"
@@ -161,14 +161,13 @@
                 </LinearLayout>
 
                 <com.andexert.library.RippleView
-                    android:id="@+id/language_button_id"
                     rv_centered="true"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentBottom="true"
                     android:layout_alignParentRight="true"
                     android:layout_marginBottom="5dp"
-                    android:layout_marginRight="30dp"
+                    android:layout_marginRight="20dp"
                     android:background="@drawable/bg_language"
                     android:gravity="center"
                     android:padding="5dp"
@@ -176,7 +175,8 @@
                     app:rv_rippleDuration="100">
 
                     <TextView
-                        android:layout_width="120dp"
+                        android:id="@+id/language_button_id"
+                        android:layout_width="110dp"
                         android:layout_height="wrap_content"
                         android:ellipsize="end"
                         android:gravity="center"
@@ -186,14 +186,13 @@
                 </com.andexert.library.RippleView>
 
                 <com.andexert.library.RippleView
-                    android:id="@+id/submit_button_id"
                     rv_centered="true"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentBottom="true"
                     android:layout_alignParentLeft="true"
                     android:layout_marginBottom="5dp"
-                    android:layout_marginLeft="30dp"
+                    android:layout_marginLeft="20dp"
                     android:background="@drawable/bg_language"
                     android:gravity="center"
                     android:padding="5dp"
@@ -201,7 +200,8 @@
                     app:rv_rippleDuration="100">
 
                     <TextView
-                        android:layout_width="120dp"
+                        android:id="@+id/submit_button_id"
+                        android:layout_width="110dp"
                         android:layout_height="wrap_content"
                         android:gravity="center"
                         android:text="Submit"

@@ -178,9 +178,13 @@ public class PhotoLGalleryFragment extends Fragment implements OnClickListener {
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         if (menu != null) {
-            MenuItem searchItem = menu.findItem(R.id.action_camera);
+            MenuItem searchItem = menu.findItem(R.id.action_search);
             if (searchItem != null) {
                 searchItem.setVisible(true);
+            }
+            MenuItem cameraItem = menu.findItem(R.id.action_camera);
+            if (cameraItem != null) {
+                cameraItem.setVisible(true);
             }
             MenuItem plusItem = menu.findItem(R.id.action_plus);
             if (plusItem != null) {

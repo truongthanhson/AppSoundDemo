@@ -2,47 +2,54 @@
 package com.poptech.popap.adapter;
 
 import android.content.Context;
-import android.util.Log;
+import android.graphics.Color;
+import android.text.Spannable;
+import android.text.SpannableString;
+import android.text.style.BackgroundColorSpan;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.Filter;
+import android.widget.Filterable;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.poptech.popap.PhotoActivity;
 import com.poptech.popap.R;
-import com.poptech.popap.utils.Database;
+import com.poptech.popap.database.PopapDatabase;
 
+import java.text.Normalizer;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Pattern;
 
-public class LanguageAdapter extends BaseAdapter {
-
+public class LanguageAdapter extends BaseAdapter implements Filterable {
     private Context mContext;
+    private List<String> mLangList;
+    private List<String> mLangFilter;
+    private List<Boolean> mLangChecked;
+    private String mItemId;
+    private ValueFilter mValueFilter;
+    private String mSearch;
 
-    private List<String> mLanguages;
-
-    private List<Boolean> mChecked;
-
-    private int mPhotoId;
-
-    public LanguageAdapter(Context context, int id, List<String> languages, List<Boolean> checked) {
+    public LanguageAdapter(Context context, String id, List<String> langList, List<Boolean> checked) {
         this.mContext = context;
-        this.mLanguages = languages;
-        this.mChecked = checked;
-        this.mPhotoId = id;
-
+        this.mLangList = langList;
+        this.mLangFilter = langList;
+        this.mLangChecked = checked;
+        this.mItemId = id;
     }
 
     @Override
     public int getCount() {
-        return mLanguages.size();
+        return mLangList.size();
     }
 
     @Override
     public Object getItem(int position) {
-        return mLanguages.get(position);
+        return mLangList.get(position);
     }
 
     @Override
@@ -67,8 +74,8 @@ public class LanguageAdapter extends BaseAdapter {
             holder = (ViewHolder) convertView.getTag();
         }
 
-        holder.mText.setText(mLanguages.get(position));
-        if (mChecked.get(position)) {
+        holder.mText.setText(highlight(mSearch, mLangList.get(position)));
+        if (mLangChecked.get(position)) {
             holder.mCheck.setVisibility(View.VISIBLE);
         } else {
             holder.mCheck.setVisibility(View.GONE);
@@ -76,17 +83,25 @@ public class LanguageAdapter extends BaseAdapter {
         holder.mLanguage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                for (int i = 0; i < mChecked.size(); i++) {
-                    mChecked.set(i, false);
+                for (int i = 0; i < mLangChecked.size(); i++) {
+                    mLangChecked.set(i, false);
                 }
-                mChecked.set(position, true);
+                mLangChecked.set(position, true);
                 notifyDataSetChanged();
-                Database.getInstance().updateActiveLanguage(mPhotoId, mLanguages.get(position));
-                ((PhotoActivity)mContext).onBackPressed();
+                PopapDatabase.getInstance(mContext).updateLanguageActive(mItemId, mLangList.get(position));
+                ((PhotoActivity) mContext).onBackPressed();
             }
         });
 
         return convertView;
+    }
+
+    @Override
+    public Filter getFilter() {
+        if (mValueFilter == null) {
+            mValueFilter = new ValueFilter();
+        }
+        return mValueFilter;
     }
 
     private class ViewHolder {
@@ -99,4 +114,61 @@ public class LanguageAdapter extends BaseAdapter {
     }
 
 
+    private class ValueFilter extends Filter {
+        @Override
+        protected FilterResults performFiltering(CharSequence constraint) {
+            FilterResults results = new FilterResults();
+            mSearch = constraint.toString();
+
+            if (constraint != null && constraint.length() > 0) {
+                List<String> filterList = new ArrayList<>();
+                for (String language : mLangFilter) {
+                    String search = constraint.toString();
+                    if (hasContains(search, language)) {
+                        filterList.add(language);
+                    }
+                }
+
+                results.count = filterList.size();
+                results.values = filterList;
+            } else {
+                results.count = mLangFilter.size();
+                results.values = mLangFilter;
+            }
+            return results;
+        }
+
+
+        private boolean hasContains(String search, String text) {
+            return Pattern.compile(Pattern.quote(search), Pattern.CASE_INSENSITIVE).matcher(text).find();
+        }
+
+        @Override
+        protected void publishResults(CharSequence constraint,
+                                      FilterResults results) {
+            mLangList = (ArrayList<String>) results.values;
+            notifyDataSetChanged();
+        }
+    }
+
+    private CharSequence highlight(String search, String originalText) {
+        if (search == null || search.isEmpty()) {
+            return originalText;
+        }
+        String normalizedText = Normalizer.normalize(originalText, Normalizer.Form.NFD).replaceAll("\\p{InCombiningDiacriticalMarks}+", "").toLowerCase();
+        int start = normalizedText.indexOf(search.toLowerCase());
+        if (start < 0) {
+            return originalText;
+        } else {
+            Spannable highlighted = new SpannableString(originalText);
+            while (start >= 0) {
+                int spanStart = Math.min(start, originalText.length());
+                int spanEnd = Math.min(start + search.length(), originalText.length());
+                highlighted.setSpan(new BackgroundColorSpan(Color.parseColor("#BFFFC6")),
+                        spanStart, spanEnd, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                start = normalizedText.indexOf(search.toLowerCase(), spanEnd);
+            }
+            return highlighted;
+        }
+    }
 }

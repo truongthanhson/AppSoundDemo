@@ -4,44 +4,44 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 public class SoundBean implements Parcelable {
-    private String sound_id;
-    private String sound_path;
-    private String sound_mark;
+    private String mSoundId;
+    private String mSoundPath;
+    private String mSoundMark;
 
     public void setSoundId(String id) {
-        this.sound_id = id;
+        this.mSoundId = id;
     }
 
     public String getSoundId() {
-        return this.sound_id;
+        return this.mSoundId;
     }
 
     public void setSoundPath(String path) {
-        this.sound_path = path;
+        this.mSoundPath = path;
     }
 
     public String getSoundPath() {
-        return this.sound_path;
+        return this.mSoundPath;
     }
 
     public void setSoundMark(String mark) {
-        this.sound_mark = mark;
+        this.mSoundMark = mark;
     }
 
     public String getSoundMark() {
-        return this.sound_mark;
+        return this.mSoundMark;
     }
 
     public SoundBean() {
-        sound_id = "";
-        sound_path = "";
-        sound_mark = "";
+        mSoundId = "";
+        mSoundPath = "";
+        mSoundMark = "";
     }
 
     protected SoundBean(Parcel in) {
-        sound_id = in.readString();
-        sound_path = in.readString();
-        sound_mark = in.readString();
+        mSoundId = in.readString();
+        mSoundPath = in.readString();
+        mSoundMark = in.readString();
     }
 
     @Override
@@ -51,9 +51,9 @@ public class SoundBean implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeString(sound_id);
-        dest.writeString(sound_path);
-        dest.writeString(sound_mark);
+        dest.writeString(mSoundId);
+        dest.writeString(mSoundPath);
+        dest.writeString(mSoundMark);
     }
 
     @SuppressWarnings("unused")

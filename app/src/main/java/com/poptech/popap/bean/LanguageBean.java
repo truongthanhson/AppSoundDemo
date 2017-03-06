@@ -3,34 +3,72 @@ package com.poptech.popap.bean;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class LanguageBean implements Parcelable {
-    private String language_id;
-    private String language_active;
+    private String mLanguageId;
+    private String mLanguageActive;
+    private List<LanguageItemBean> mLanguageItem;
 
     public void setLanguageId(String id) {
-        this.language_id = id;
+        this.mLanguageId = id;
     }
 
     public String getLanguageId() {
-        return this.language_id;
+        return this.mLanguageId;
     }
 
     public void setLanguageActive(String language) {
-        this.language_active = language;
+        this.mLanguageActive = language;
     }
 
     public String getLanguageActive() {
-        return this.language_active;
+        return this.mLanguageActive;
+    }
+
+    public void setLanguageItem(List<LanguageItemBean> languageItem) {
+        this.mLanguageItem = languageItem;
+    }
+
+    public List<LanguageItemBean> getLanguageItem() {
+        return this.mLanguageItem;
+    }
+
+    public void updateLanguageComment(String comment) {
+        for (int i = 0; i < mLanguageItem.size(); i++) {
+            if (mLanguageItem.get(i).getLanguageItemName().equals(mLanguageActive)) {
+                mLanguageItem.get(i).setLanguageItemComment(comment);
+                break;
+            }
+        }
+    }
+
+    public void addLanguageItem(LanguageItemBean item) {
+        mLanguageItem.add(item);
+    }
+
+    public String getLanguageItemComment() {
+        String comment = "";
+        for (int i = 0; i < mLanguageItem.size(); i++) {
+            if (mLanguageItem.get(i).getLanguageItemName().equals(mLanguageActive)) {
+                comment = mLanguageItem.get(i).getLanguageItemComment();
+            }
+        }
+        return comment;
     }
 
     public LanguageBean() {
-        language_id = "";
-        language_active = "";
+        mLanguageId = "";
+        mLanguageActive = "";
+        mLanguageItem = new ArrayList<>();
     }
 
     protected LanguageBean(Parcel in) {
-        language_id = in.readString();
-        language_active = in.readString();
+        mLanguageId = in.readString();
+        mLanguageActive = in.readString();
+        mLanguageItem = new ArrayList<>();
+        in.readTypedList(mLanguageItem, LanguageItemBean.CREATOR);
     }
 
     @Override
@@ -40,8 +78,9 @@ public class LanguageBean implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeString(language_id);
-        dest.writeString(language_active);
+        dest.writeString(mLanguageId);
+        dest.writeString(mLanguageActive);
+        dest.writeTypedList(mLanguageItem);
     }
 
     @SuppressWarnings("unused")

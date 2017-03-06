@@ -4,33 +4,33 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 public class PhotoBean implements Parcelable {
-    private String photo_id;
-    private String photo_path;
+    private String mPhotoId;
+    private String mPhotoPath;
 
     public void setPhotoId(String id) {
-        this.photo_id = id;
+        this.mPhotoId = id;
     }
 
     public String getPhotoId() {
-        return this.photo_id;
+        return this.mPhotoId;
     }
 
     public void setPhotoPath(String path) {
-        this.photo_path = path;
+        this.mPhotoPath = path;
     }
 
     public String getPhotoPath() {
-        return this.photo_path;
+        return this.mPhotoPath;
     }
 
     public PhotoBean() {
-        photo_id = "";
-        photo_path = "";
+        mPhotoId = "";
+        mPhotoPath = "";
     }
 
     protected PhotoBean(Parcel in) {
-        photo_id = in.readString();
-        photo_path = in.readString();
+        mPhotoId = in.readString();
+        mPhotoPath = in.readString();
     }
 
     @Override
@@ -40,8 +40,8 @@ public class PhotoBean implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeString(photo_id);
-        dest.writeString(photo_path);
+        dest.writeString(mPhotoId);
+        dest.writeString(mPhotoPath);
     }
 
     @SuppressWarnings("unused")
