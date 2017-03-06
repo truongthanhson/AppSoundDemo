@@ -225,7 +225,7 @@ public class AudioWaveFormTimelineView extends View {
 
         canvas.drawCircle(startX, getMeasuredHeight() / 2, AndroidUtilities.dp(8), paint);
         canvas.drawCircle(midX, getMeasuredHeight() / 2, AndroidUtilities.dp(8), paint);
-        canvas.drawCircle(endX, getMeasuredHeight() / 2, AndroidUtilities.dp(8), paint);
+        canvas.drawCircle(endX + AndroidUtilities.dp(2), getMeasuredHeight() / 2, AndroidUtilities.dp(8), paint);
     }
 
     public void setProgressLeft(float progressLeft) {
