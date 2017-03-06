@@ -22,6 +22,7 @@ import com.poptech.popap.database.PopapDatabase;
 import com.poptech.popap.listener.HomeActivityDelegate;
 import com.poptech.popap.utils.Constants;
 import com.poptech.popap.utils.Database;
+import com.poptech.popap.view.ItemDecorationColumns;
 
 public class PhotoListFragment extends Fragment implements OnClickListener {
     private View mView;
@@ -54,10 +55,12 @@ public class PhotoListFragment extends Fragment implements OnClickListener {
 
     private void initView() {
         RecyclerView recyclerView = (RecyclerView) mView.findViewById(R.id.photo_recycle_id);
-        recyclerView.setHasFixedSize(true);
-        RecyclerView.LayoutManager layoutManager = new GridLayoutManager(getActivity(), 3);
-        recyclerView.setLayoutManager(layoutManager);
+        RecyclerView.LayoutManager layoutManager = new GridLayoutManager(getActivity(), Constants.GRID_COLUMN_COUNT);
+        ItemDecorationColumns itemDecoration = new ItemDecorationColumns(Constants.GRID_COLUMN_COUNT, getResources().getDimensionPixelSize(R.dimen.grid_divider), true);
         PhotoListAdapter adapter = new PhotoListAdapter(getActivity(), PopapDatabase.getInstance(getActivity()).getPhotos());
+        recyclerView.setHasFixedSize(true);
+        recyclerView.setLayoutManager(layoutManager);
+        recyclerView.addItemDecoration(itemDecoration);
         recyclerView.setAdapter(adapter);
     }
 

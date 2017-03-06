@@ -28,6 +28,7 @@ import com.poptech.popap.adapter.PhotoGalleryAdapter;
 import com.poptech.popap.database.PopapDatabase;
 import com.poptech.popap.utils.Constants;
 import com.poptech.popap.utils.Database;
+import com.poptech.popap.view.ItemDecorationColumns;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -72,10 +73,12 @@ public class PhotoLGalleryFragment extends Fragment implements OnClickListener {
     private void initView() {
         getAllImages(getActivity());
         RecyclerView recyclerView = (RecyclerView) mView.findViewById(R.id.photo_recycle_id);
-        recyclerView.setHasFixedSize(true);
-        RecyclerView.LayoutManager layoutManager = new GridLayoutManager(getActivity(), 3);
-        recyclerView.setLayoutManager(layoutManager);
+        RecyclerView.LayoutManager layoutManager = new GridLayoutManager(getActivity(), Constants.GRID_COLUMN_COUNT);
+        ItemDecorationColumns itemDecoration = new ItemDecorationColumns(Constants.GRID_COLUMN_COUNT, getResources().getDimensionPixelSize(R.dimen.grid_divider), true);
         PhotoGalleryAdapter adapter = new PhotoGalleryAdapter(getActivity(), mItemId, getAllImages(getActivity()));
+        recyclerView.setHasFixedSize(true);
+        recyclerView.setLayoutManager(layoutManager);
+        recyclerView.addItemDecoration(itemDecoration);
         recyclerView.setAdapter(adapter);
     }
 

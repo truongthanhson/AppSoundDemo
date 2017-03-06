@@ -17,6 +17,7 @@ import com.poptech.popap.bean.PhotoBean;
 import com.poptech.popap.database.PopapDatabase;
 import com.poptech.popap.listener.HomeActivityDelegate;
 import com.poptech.popap.utils.Database;
+import com.poptech.popap.utils.StringUtils;
 import com.poptech.popap.utils.Utils;
 
 import java.util.ArrayList;
@@ -53,13 +54,14 @@ public class PhotoGalleryAdapter extends RecyclerView.Adapter<PhotoGalleryAdapte
 
         });
 
-        Glide.with(mContext)
-                .load(mPhotoList.get(position))
-                .override(Utils.getDisplayWidth((Activity) mContext) / 3, Utils.getDisplayWidth((Activity) mContext) / 3)
-                .centerCrop()
-                .diskCacheStrategy(DiskCacheStrategy.ALL)
-                .into(viewHolder.mPhotoView);
-
+        if (!StringUtils.isNullOrEmpty(mPhotoList.get(position))) {
+            Glide.with(mContext)
+                    .load(mPhotoList.get(position))
+                    .override(Utils.getDisplayWidth((Activity) mContext) / 3, Utils.getDisplayWidth((Activity) mContext) / 3)
+                    .centerCrop()
+                    .diskCacheStrategy(DiskCacheStrategy.ALL)
+                    .into(viewHolder.mPhotoView);
+        }
     }
 
     @Override

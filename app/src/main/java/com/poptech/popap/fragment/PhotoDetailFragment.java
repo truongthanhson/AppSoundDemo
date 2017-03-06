@@ -423,7 +423,7 @@ public class PhotoDetailFragment extends Fragment implements OnClickListener, Vi
                 mView.findViewById(R.id.record_press_fl_id).setVisibility(View.GONE);
                 VoiceRecorder.getInstance().endRecord();
                 mTimer.cancel();
-                PopapDatabase.getInstance(getActivity()).updatePhotoPath(mItemId, mSoundBean.getSoundPath());
+                PopapDatabase.getInstance(getActivity()).updateSoundPath(mItemId, mSoundBean.getSoundPath());
                 break;
             case MotionEvent.ACTION_MOVE:
                 break;

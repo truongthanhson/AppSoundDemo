@@ -50,12 +50,7 @@ public class PhotoListAdapter extends RecyclerView.Adapter<PhotoListAdapter.View
 
         });
 
-        if (StringUtils.isNullOrEmpty(mPhotoList.get(position).getPhotoPath())) {
-            RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(
-                    Utils.getDisplayWidth((Activity) mContext) / 3,
-                    Utils.getDisplayWidth((Activity) mContext) / 3);
-            viewHolder.mPhotoView.setLayoutParams(layoutParams);
-        } else {
+        if (!StringUtils.isNullOrEmpty(mPhotoList.get(position).getPhotoPath())) {
             Glide.with(mContext)
                     .load(mPhotoList.get(position).getPhotoPath())
                     .override(Utils.getDisplayWidth((Activity) mContext) / 3, Utils.getDisplayWidth((Activity) mContext) / 3)
@@ -63,7 +58,6 @@ public class PhotoListAdapter extends RecyclerView.Adapter<PhotoListAdapter.View
                     .diskCacheStrategy(DiskCacheStrategy.ALL)
                     .into(viewHolder.mPhotoView);
         }
-
     }
 
     @Override
