@@ -5,7 +5,7 @@ android {
     compileSdkVersion 23
     buildToolsVersion "23.0.1"
     defaultConfig {
-        applicationId "com.sontruong.appsound"
+        applicationId "com.poptech.popap"
         minSdkVersion 16
         targetSdkVersion 22
         versionCode 1

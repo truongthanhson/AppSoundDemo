@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Photo Sound</string>
+    <string name="app_name">PoPaP</string>
     <string name="login_error_username">Please enter username</string>
     <string name="login_error_password">Please enter password</string>
     <string name="login_error_language">Please choose language</string>
