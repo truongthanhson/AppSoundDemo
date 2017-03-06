@@ -56,7 +56,7 @@ public class AudioWaveFormTimelineView extends View {
     }
     private void init(Context context) {
         paint = new Paint();
-        paint.setColor(0xff66d1ee);
+        paint.setColor(0xffBDBDBD);
         paint2 = new Paint();
         paint2.setColor(0x7f000000);
     }
@@ -225,7 +225,7 @@ public class AudioWaveFormTimelineView extends View {
 
         canvas.drawCircle(startX, getMeasuredHeight() / 2, AndroidUtilities.dp(8), paint);
         canvas.drawCircle(midX, getMeasuredHeight() / 2, AndroidUtilities.dp(8), paint);
-        canvas.drawCircle(endX, getMeasuredHeight() / 2, AndroidUtilities.dp(8), paint);
+        canvas.drawCircle(endX + AndroidUtilities.dp(2), getMeasuredHeight() / 2, AndroidUtilities.dp(8), paint);
     }
 
     public void setProgressLeft(float progressLeft) {
