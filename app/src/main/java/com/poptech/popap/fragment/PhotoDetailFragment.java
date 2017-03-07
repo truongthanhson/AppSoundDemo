@@ -9,10 +9,7 @@ import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
-import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
-import android.text.TextUtils;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -46,12 +43,9 @@ import com.poptech.popap.utils.AndroidUtilities;
 import com.poptech.popap.utils.AnimationUtils;
 import com.poptech.popap.utils.Constants;
 import com.poptech.popap.utils.CountUpTimer;
-import com.poptech.popap.utils.Database;
 import com.poptech.popap.utils.StringUtils;
 import com.poptech.popap.utils.Utils;
 import com.poptech.popap.view.AudioWaveFormTimelineView;
-
-import org.w3c.dom.Text;
 
 import java.io.File;
 
@@ -196,6 +190,7 @@ public class PhotoDetailFragment extends Fragment implements OnClickListener, Vi
         Glide.with(this)
                 .load(mPhotoBean.getPhotoPath())
                 .centerCrop()
+                .placeholder(R.color.white)
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
                 .into(mImageView);
         mImageView.setOnClickListener(this);

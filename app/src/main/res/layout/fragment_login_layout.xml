@@ -80,7 +80,7 @@
                 android:layout_marginLeft="20dp"
                 android:layout_marginRight="20dp"
                 android:layout_marginTop="20dp"
-                android:background="#c62828"
+                android:background="#303F9F"
                 app:rv_rippleDuration="150">
 
                 <TextView

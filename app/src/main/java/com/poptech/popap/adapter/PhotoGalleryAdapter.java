@@ -13,10 +13,7 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.poptech.popap.PhotoActivity;
 import com.poptech.popap.R;
-import com.poptech.popap.bean.PhotoBean;
 import com.poptech.popap.database.PopapDatabase;
-import com.poptech.popap.listener.HomeActivityDelegate;
-import com.poptech.popap.utils.Database;
 import com.poptech.popap.utils.StringUtils;
 import com.poptech.popap.utils.Utils;
 

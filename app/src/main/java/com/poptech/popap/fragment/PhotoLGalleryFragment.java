@@ -27,7 +27,6 @@ import com.poptech.popap.R;
 import com.poptech.popap.adapter.PhotoGalleryAdapter;
 import com.poptech.popap.database.PopapDatabase;
 import com.poptech.popap.utils.Constants;
-import com.poptech.popap.utils.Database;
 import com.poptech.popap.view.ItemDecorationColumns;
 
 import java.io.File;

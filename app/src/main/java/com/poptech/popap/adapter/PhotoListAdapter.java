@@ -3,6 +3,7 @@ package com.poptech.popap.adapter;
 import android.app.Activity;
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -28,6 +29,10 @@ public class PhotoListAdapter extends RecyclerView.Adapter<PhotoListAdapter.View
     public PhotoListAdapter(Context context, ArrayList<PhotoBean> photoList) {
         this.mPhotoList = photoList;
         this.mContext = context;
+
+        for (PhotoBean photo : mPhotoList) {
+            Log.d("HEHE", "id: " + photo.getPhotoId() + ", path: " + photo.getPhotoPath());
+        }
     }
 
     @Override
@@ -49,15 +54,15 @@ public class PhotoListAdapter extends RecyclerView.Adapter<PhotoListAdapter.View
             }
 
         });
+        Glide.with(mContext)
+                .load(mPhotoList.get(position).getPhotoPath())
+                .override(Utils.getDisplayWidth((Activity) mContext) / 3, Utils.getDisplayWidth((Activity) mContext) / 3)
+                .centerCrop()
+                .thumbnail(0.5f)
+                .placeholder(R.color.white)
+                .diskCacheStrategy(DiskCacheStrategy.ALL)
+                .into(viewHolder.mPhotoView);
 
-        if (!StringUtils.isNullOrEmpty(mPhotoList.get(position).getPhotoPath())) {
-            Glide.with(mContext)
-                    .load(mPhotoList.get(position).getPhotoPath())
-                    .override(Utils.getDisplayWidth((Activity) mContext) / 3, Utils.getDisplayWidth((Activity) mContext) / 3)
-                    .centerCrop()
-                    .diskCacheStrategy(DiskCacheStrategy.ALL)
-                    .into(viewHolder.mPhotoView);
-        }
     }
 
     @Override

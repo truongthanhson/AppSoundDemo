@@ -18,7 +18,7 @@ public class Constants {
 
     public static final int REQUEST_AVATAR_CAPTURE = 0;
 
-    public static final String PATH_APP = "/PhotoSound";
+    public static final String PATH_APP = "/PoPaP";
 
     public static final String PATH_PHOTO = "/photo";
     public static final String PATH_SOUND = "/sound";

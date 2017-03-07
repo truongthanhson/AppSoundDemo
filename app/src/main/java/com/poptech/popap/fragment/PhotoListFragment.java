@@ -21,7 +21,6 @@ import com.poptech.popap.bean.PhotoBean;
 import com.poptech.popap.database.PopapDatabase;
 import com.poptech.popap.listener.HomeActivityDelegate;
 import com.poptech.popap.utils.Constants;
-import com.poptech.popap.utils.Database;
 import com.poptech.popap.view.ItemDecorationColumns;
 
 public class PhotoListFragment extends Fragment implements OnClickListener {
