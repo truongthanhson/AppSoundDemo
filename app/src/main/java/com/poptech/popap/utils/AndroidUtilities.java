@@ -1,5 +1,8 @@
 package com.poptech.popap.utils;
 
+import android.app.Activity;
+import android.view.inputmethod.InputMethodManager;
+
 import com.poptech.popap.PopapApplication;
 
 /**
@@ -29,5 +32,13 @@ public class AndroidUtilities {
         } else {
             PopapApplication.applicationHandler.postDelayed(runnable, delay);
         }
+    }
+
+    public static void hideSoftKeyboard(Activity activity) {
+        InputMethodManager inputMethodManager =
+                (InputMethodManager) activity.getSystemService(
+                        Activity.INPUT_METHOD_SERVICE);
+        inputMethodManager.hideSoftInputFromWindow(
+                activity.getCurrentFocus().getWindowToken(), 0);
     }
 }

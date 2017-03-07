@@ -21,6 +21,7 @@ import com.poptech.popap.R;
 import com.poptech.popap.adapter.LanguageAdapter;
 import com.poptech.popap.bean.LanguageBean;
 import com.poptech.popap.database.PopapDatabase;
+import com.poptech.popap.utils.AndroidUtilities;
 import com.poptech.popap.utils.Constants;
 import com.poptech.popap.utils.Utils;
 
@@ -117,6 +118,7 @@ public class LanguageFragment extends Fragment implements OnClickListener, Searc
     public void onStop() {
         // TODO Auto-generated method stub
         super.onStop();
+        AndroidUtilities.hideSoftKeyboard(getActivity());
     }
 
     @Override
