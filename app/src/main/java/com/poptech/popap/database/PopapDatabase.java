@@ -337,6 +337,29 @@ public class PopapDatabase extends SQLiteOpenHelper {
         }
     }
 
+    public long deletePhoto(String id) {
+        long kq = 0;
+        synchronized (this) {
+            try {
+                mSQLite = getWritableDatabase();
+                openDatabase();
+                if (mSQLite == null) {
+                    return -1;
+                }
+
+                String sql = PhotoColumns.PHOTO_ID + " = ?";
+                String[] params = {id};
+                kq = mSQLite.delete(Tables.PHOTOS, sql, params);
+                return kq;
+            } catch (Exception exception) {
+                exception.printStackTrace();
+                return -1;
+            } finally {
+                closeDatabase();
+            }
+        }
+    }
+
     public boolean checkSoundExist(String id) {
         boolean ret = false;
         synchronized (this) {

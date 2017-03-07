@@ -1,7 +1,10 @@
 package com.poptech.popap.adapter;
 
+import android.app.ActionBar;
 import android.app.Activity;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -14,8 +17,10 @@ import android.widget.RelativeLayout;
 import com.andexert.library.RippleView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.poptech.popap.PhotoActivity;
 import com.poptech.popap.R;
 import com.poptech.popap.bean.PhotoBean;
+import com.poptech.popap.database.PopapDatabase;
 import com.poptech.popap.listener.HomeActivityDelegate;
 import com.poptech.popap.utils.StringUtils;
 import com.poptech.popap.utils.Utils;
@@ -29,10 +34,6 @@ public class PhotoListAdapter extends RecyclerView.Adapter<PhotoListAdapter.View
     public PhotoListAdapter(Context context, ArrayList<PhotoBean> photoList) {
         this.mPhotoList = photoList;
         this.mContext = context;
-
-        for (PhotoBean photo : mPhotoList) {
-            Log.d("HEHE", "id: " + photo.getPhotoId() + ", path: " + photo.getPhotoPath());
-        }
     }
 
     @Override
@@ -44,7 +45,7 @@ public class PhotoListAdapter extends RecyclerView.Adapter<PhotoListAdapter.View
     @Override
     public void onBindViewHolder(PhotoListAdapter.ViewHolder viewHolder, int position) {
 
-        viewHolder.mPhotoRipple.setOnRippleCompleteListener(new RippleView.OnRippleCompleteListener() {
+        /*viewHolder.mPhotoRipple.setOnRippleCompleteListener(new RippleView.OnRippleCompleteListener() {
 
             @Override
             public void onComplete(RippleView rippleView) {
@@ -53,6 +54,39 @@ public class PhotoListAdapter extends RecyclerView.Adapter<PhotoListAdapter.View
                 }
             }
 
+        });*/
+        viewHolder.mPhotoView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (mContext instanceof HomeActivityDelegate) {
+                    ((HomeActivityDelegate) mContext).onStartPhotoDetailFragment(mPhotoList.get(position).getPhotoId());
+                }
+            }
+        });
+        viewHolder.mPhotoView.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                CharSequence options[] = new CharSequence[]{"Remove", "Cancel"};
+
+                AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
+                builder.setTitle("Remove Item");
+                builder.setItems(options, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        if (which == 0) {
+                            if (PopapDatabase.getInstance(mContext).checkPhotoExist(mPhotoList.get(position).getPhotoId())) {
+                                PopapDatabase.getInstance(mContext).deletePhoto(mPhotoList.get(position).getPhotoId());
+                            }
+                            mPhotoList.remove(position);
+                            notifyDataSetChanged();
+                        } else {
+                            dialog.dismiss();
+                        }
+                    }
+                });
+                builder.show();
+                return false;
+            }
         });
         Glide.with(mContext)
                 .load(mPhotoList.get(position).getPhotoPath())

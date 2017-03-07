@@ -56,6 +56,8 @@ public class PhotoGalleryAdapter extends RecyclerView.Adapter<PhotoGalleryAdapte
                     .load(mPhotoList.get(position))
                     .override(Utils.getDisplayWidth((Activity) mContext) / 3, Utils.getDisplayWidth((Activity) mContext) / 3)
                     .centerCrop()
+                    .thumbnail(0.5f)
+                    .placeholder(R.color.white)
                     .diskCacheStrategy(DiskCacheStrategy.ALL)
                     .into(viewHolder.mPhotoView);
         }
